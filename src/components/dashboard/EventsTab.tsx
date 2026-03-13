@@ -132,7 +132,7 @@ export function EventsTab({
                         className={`text-sm font-medium ${
                           event.type === 'Сабаққа кешігу'
                             ? 'text-amber-600'
-                            : event.type === 'Ескертпей сабаққа келмеуі'
+                            : event.type === 'Сабаққа келмеу' || event.type === 'Ескертпей сабаққа келмеуі' || event.type === 'БТС емтиханы күні келмеуі'
                               ? 'text-red-600'
                               : 'text-blue-600'
                         }`}

@@ -75,8 +75,12 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
     }
 
     try {
-      const { data: existingProfile } = await supabase.from('school_profile').select('id').limit(1).single();
-      const updateData = {
+      const [{ data: existingProfile }, { data: authData }] = await Promise.all([
+        supabase.from('school_profile').select('id').limit(1).single(),
+        supabase.auth.getUser(),
+      ]);
+
+      const schoolProfileData = {
         school_name: profile.schoolName,
         director_name: profile.name,
         academic_year: profile.academicYear,
@@ -86,11 +90,26 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
         avatar_url: profile.avatar,
       };
 
-      const result = existingProfile
-        ? await supabase.from('school_profile').update(updateData).eq('id', existingProfile.id)
-        : await supabase.from('school_profile').insert([updateData]);
+      const schoolProfileResult = existingProfile
+        ? await supabase.from('school_profile').update(schoolProfileData).eq('id', existingProfile.id)
+        : await supabase.from('school_profile').insert([schoolProfileData]);
 
-      if (result.error) throw result.error;
+      if (schoolProfileResult.error) throw schoolProfileResult.error;
+
+      const userId = authData.user?.id;
+      if (userId) {
+        const adminProfileResult = await supabase.from('admin_profiles').upsert(
+          {
+            id: userId,
+            full_name: profile.name,
+            role: profile.position,
+          },
+          { onConflict: 'id' },
+        );
+
+        if (adminProfileResult.error) throw adminProfileResult.error;
+      }
+
       setShowSaveToast(true);
       setTimeout(() => setShowSaveToast(false), 3000);
     } catch (error: any) {

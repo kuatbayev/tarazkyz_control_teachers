@@ -40,11 +40,17 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       }
 
       try {
-        const [teachersRes, eventsRes, profileRes] = await Promise.all([
+        const [{ data: authData }, teachersRes, eventsRes, profileRes] = await Promise.all([
+          supabase.auth.getUser(),
           supabase.from('teachers').select('*'),
           supabase.from('events').select('*').order('date', { ascending: false }),
           supabase.from('school_profile').select('*').limit(1).single(),
         ]);
+
+        const userId = authData.user?.id;
+        const adminProfileRes = userId
+          ? await supabase.from('admin_profiles').select('*').eq('id', userId).maybeSingle()
+          : { data: null, error: null };
 
         if (teachersRes.data) {
           setTeachersList(
@@ -80,13 +86,13 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
 
         if (profileRes.data) {
           setProfile({
-            name: profileRes.data.director_name,
-            email: profileRes.data.email || '',
+            name: adminProfileRes.data?.full_name || profileRes.data.director_name,
+            email: authData.user?.email || profileRes.data.email || '',
             phone: profileRes.data.phone || '',
             schoolName: profileRes.data.school_name,
             academicYear: profileRes.data.academic_year,
             currentTerm: profileRes.data.current_term,
-            position: 'Мектеп директоры',
+            position: adminProfileRes.data?.role || 'Мектеп директоры',
             avatar: profileRes.data.avatar_url,
           });
         }

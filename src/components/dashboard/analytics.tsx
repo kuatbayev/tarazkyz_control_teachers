@@ -39,12 +39,12 @@ export function buildDashboardAnalytics(teachersList: Teacher[], eventsList: Eve
             score -= 2;
             latenesses += 1;
             break;
-          case 'БЖБ немесе емтихан күні келмеуі':
+          case 'БТС емтиханы күні келмеуі':
             score -= 15;
             absences += 1;
             lostLessons += 1;
             break;
-          case 'Кезек ескерту':
+          case 'Кеш ескерту':
             score -= 3;
             break;
           case 'Ескертпей сабаққа келмеуі':
@@ -52,11 +52,11 @@ export function buildDashboardAnalytics(teachersList: Teacher[], eventsList: Eve
             absences += 1;
             lostLessons += 1;
             break;
-          case 'Ауру қалуы':
+          case 'Ауырып қалуы':
             score -= 1;
             sickDays += 1;
             break;
-          case 'Семинар / конференцияға кетуі':
+          case 'Семинар / командировкаға кетуі':
             break;
         }
       });
