@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -47,7 +47,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   const [teacherSort, setTeacherSort] = useState<{ key: keyof Teacher; direction: 'asc' | 'desc' }>({ key: 'rank', direction: 'asc' });
   const [eventSort, setEventSort] = useState<{ key: keyof Event; direction: 'asc' | 'desc' }>({ key: 'date', direction: 'desc' });
   const [showSaveToast, setShowSaveToast] = useState(false);
-  const [showCongratulateToast, setShowCongratulateToast] = useState(false);
 
   const {
     teachersList,
@@ -112,7 +111,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
       setTimeout(() => setShowSaveToast(false), 3000);
     } catch (error: any) {
       console.error('Error saving settings:', error);
-      alert(`Сақтау кезінде қате шықты: ${error.message}`);
+      alert(`РЎР°Т›С‚Р°Сѓ РєРµР·С–РЅРґРµ Т›Р°С‚Рµ С€С‹Т›С‚С‹: ${error.message}`);
     }
   };
 
@@ -120,7 +119,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
     if (!hasSupabaseConfig) {
       return {
         success: false,
-        message: 'Локалды режимде құпия сөзді өзгерту қолжетімсіз.',
+        message: 'Р›РѕРєР°Р»РґС‹ СЂРµР¶РёРјРґРµ Т›Т±РїРёСЏ СЃУ©Р·РґС– У©Р·РіРµСЂС‚Сѓ Т›РѕР»Р¶РµС‚С–РјСЃС–Р·.',
       };
     }
 
@@ -130,13 +129,13 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
 
       return {
         success: true,
-        message: 'Құпия сөз сәтті өзгертілді.',
+        message: 'ТљТ±РїРёСЏ СЃУ©Р· СЃУ™С‚С‚С– У©Р·РіРµСЂС‚С–Р»РґС–.',
       };
     } catch (error: any) {
       console.error('Error changing password:', error);
       return {
         success: false,
-        message: error.message || 'Құпия сөзді өзгерту кезінде қате шықты.',
+        message: error.message || 'ТљТ±РїРёСЏ СЃУ©Р·РґС– У©Р·РіРµСЂС‚Сѓ РєРµР·С–РЅРґРµ Т›Р°С‚Рµ С€С‹Т›С‚С‹.',
       };
     }
   };
@@ -155,20 +154,20 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   }, {});
   const selectedTeacherKPIs = selectedTeacher
     ? [
-        { title: 'Оқиғалар', value: selectedTeacher.totalEvents, trend: 'Жеке', trendType: 'neutral' as const, icon: <Calendar className="h-5 w-5" />, color: 'bg-blue-500' },
-        { title: 'Сабаққа келмеу', value: selectedTeacherEventCounts['Сабаққа келмеу'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserX className="h-5 w-5" />, color: 'bg-red-500' },
-        { title: 'Сабаққа кешігу', value: selectedTeacherEventCounts['Сабаққа кешігу'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
-        { title: 'БТС емтиханы күні келмеуі', value: selectedTeacherEventCounts['БТС емтиханы күні келмеуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
-        { title: 'Кеш ескерту', value: selectedTeacherEventCounts['Кеш ескерту'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
-        { title: 'Ескертпей сабаққа келмеуі', value: selectedTeacherEventCounts['Ескертпей сабаққа келмеуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
-        { title: 'Ауырып қалуы', value: selectedTeacherEventCounts['Ауырып қалуы'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
-        { title: 'Семинар / командировкаға кетуі', value: selectedTeacherEventCounts['Семинар / командировкаға кетуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
-        { title: 'Тәртіп көрсеткіші', value: `${selectedTeacher.score}%`, trend: `Рейтингте #${selectedTeacher.rank}`, trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-indigo-600' },
-                      { title: 'БТС емтиханы күні келмеуі', value: selectedTeacherEventCounts['БТС емтиханы күні келмеуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
-                      { title: 'Кеш ескерту', value: selectedTeacherEventCounts['Кеш ескерту'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
-                      { title: 'Ескертпей сабаққа келмеуі', value: selectedTeacherEventCounts['Ескертпей сабаққа келмеуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
-                      { title: 'Ауырып қалуы', value: selectedTeacherEventCounts['Ауырып қалуы'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
-                      { title: 'Семинар / командировкаға кетуі', value: selectedTeacherEventCounts['Семинар / командировкаға кетуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
+        { title: 'РћТ›РёТ“Р°Р»Р°СЂ', value: selectedTeacher.totalEvents, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <Calendar className="h-5 w-5" />, color: 'bg-blue-500' },
+        { title: 'РЎР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓ', value: selectedTeacherEventCounts['РЎР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓ'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <UserX className="h-5 w-5" />, color: 'bg-red-500' },
+        { title: 'РЎР°Р±Р°Т›Т›Р° РєРµС€С–РіСѓ', value: selectedTeacherEventCounts['РЎР°Р±Р°Т›Т›Р° РєРµС€С–РіСѓ'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
+        { title: 'Р‘РўРЎ РµРјС‚РёС…Р°РЅС‹ РєТЇРЅС– РєРµР»РјРµСѓС–', value: selectedTeacherEventCounts['Р‘РўРЎ РµРјС‚РёС…Р°РЅС‹ РєТЇРЅС– РєРµР»РјРµСѓС–'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
+        { title: 'РљРµС€ РµСЃРєРµСЂС‚Сѓ', value: selectedTeacherEventCounts['РљРµС€ РµСЃРєРµСЂС‚Сѓ'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
+        { title: 'Р•СЃРєРµСЂС‚РїРµР№ СЃР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓС–', value: selectedTeacherEventCounts['Р•СЃРєРµСЂС‚РїРµР№ СЃР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓС–'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
+        { title: 'РђСѓС‹СЂС‹Рї Т›Р°Р»СѓС‹', value: selectedTeacherEventCounts['РђСѓС‹СЂС‹Рї Т›Р°Р»СѓС‹'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
+        { title: 'РЎРµРјРёРЅР°СЂ / РєРѕРјР°РЅРґРёСЂРѕРІРєР°Т“Р° РєРµС‚СѓС–', value: selectedTeacherEventCounts['РЎРµРјРёРЅР°СЂ / РєРѕРјР°РЅРґРёСЂРѕРІРєР°Т“Р° РєРµС‚СѓС–'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
+        { title: 'РўУ™СЂС‚С–Рї РєУ©СЂСЃРµС‚РєС–С€С–', value: `${selectedTeacher.score}%`, trend: `Р РµР№С‚РёРЅРіС‚Рµ #${selectedTeacher.rank}`, trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-indigo-600' },
+                      { title: 'Р‘РўРЎ РµРјС‚РёС…Р°РЅС‹ РєТЇРЅС– РєРµР»РјРµСѓС–', value: selectedTeacherEventCounts['Р‘РўРЎ РµРјС‚РёС…Р°РЅС‹ РєТЇРЅС– РєРµР»РјРµСѓС–'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
+                      { title: 'РљРµС€ РµСЃРєРµСЂС‚Сѓ', value: selectedTeacherEventCounts['РљРµС€ РµСЃРєРµСЂС‚Сѓ'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
+                      { title: 'Р•СЃРєРµСЂС‚РїРµР№ СЃР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓС–', value: selectedTeacherEventCounts['Р•СЃРєРµСЂС‚РїРµР№ СЃР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓС–'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
+                      { title: 'РђСѓС‹СЂС‹Рї Т›Р°Р»СѓС‹', value: selectedTeacherEventCounts['РђСѓС‹СЂС‹Рї Т›Р°Р»СѓС‹'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
+                      { title: 'РЎРµРјРёРЅР°СЂ / РєРѕРјР°РЅРґРёСЂРѕРІРєР°Т“Р° РєРµС‚СѓС–', value: selectedTeacherEventCounts['РЎРµРјРёРЅР°СЂ / РєРѕРјР°РЅРґРёСЂРѕРІРєР°Т“Р° РєРµС‚СѓС–'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
                       ]
     : schoolKPIs;
 
@@ -189,7 +188,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
       <div className="flex min-h-screen items-center justify-center bg-[#F8FAFC] text-slate-900">
         <div className="flex flex-col items-center gap-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
-          <p className="font-bold text-slate-500">Деректер жүктелуде...</p>
+          <p className="font-bold text-slate-500">Р”РµСЂРµРєС‚РµСЂ Р¶ТЇРєС‚РµР»СѓРґРµ...</p>
         </div>
       </div>
     );
@@ -200,14 +199,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
       <AnimatePresence>
         {showSaveToast && (
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="fixed right-8 top-24 z-[9999] flex items-center gap-3 rounded-2xl bg-emerald-600 px-6 py-3 text-white shadow-xl">
-            <CheckCircle2 className="h-5 w-5" />
-            <span className="text-sm font-bold">Өзгерістер сәтті сақталды!</span>
-          </motion.div>
-        )}
-        {showCongratulateToast && (
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="fixed right-8 top-24 z-[9999] flex items-center gap-3 rounded-2xl bg-blue-600 px-6 py-3 text-white shadow-xl">
-            <CheckCircle2 className="h-5 w-5" />
-            <span className="text-sm font-bold">Құттықтау хаты жіберілді!</span>
+            <span className="text-sm font-bold">УЁР·РіРµСЂС–СЃС‚РµСЂ СЃУ™С‚С‚С– СЃР°Т›С‚Р°Р»РґС‹!</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -232,7 +224,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div className="flex flex-wrap items-center gap-3">
                   <select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500" value={selectedTeacherId || ''} onChange={(e) => setSelectedTeacherId(e.target.value || null)}>
-                    <option value="">Барлық мұғалімдер (мектеп шолуы)</option>
+                    <option value="">Р‘Р°СЂР»С‹Т› РјТ±Т“Р°Р»С–РјРґРµСЂ (РјРµРєС‚РµРї С€РѕР»СѓС‹)</option>
                     {derivedTeachers.map((teacher) => (
                       <option key={teacher.id} value={teacher.id}>
                         {teacher.name}
@@ -240,20 +232,20 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                     ))}
                   </select>
                   <select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>2025-2026 оқу жылы</option>
-                    <option>2024-2025 оқу жылы</option>
+                    <option>2025-2026 РѕТ›Сѓ Р¶С‹Р»С‹</option>
+                    <option>2024-2025 РѕТ›Сѓ Р¶С‹Р»С‹</option>
                   </select>
                   <select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Жалпы</option>
-                    <option>1 тоқсан</option>
-                    <option>2 тоқсан</option>
-                    <option>3 тоқсан</option>
-                    <option>4 тоқсан</option>
+                    <option>Р–Р°Р»РїС‹</option>
+                    <option>1 С‚РѕТ›СЃР°РЅ</option>
+                    <option>2 С‚РѕТ›СЃР°РЅ</option>
+                    <option>3 С‚РѕТ›СЃР°РЅ</option>
+                    <option>4 С‚РѕТ›СЃР°РЅ</option>
                   </select>
                 </div>
                 {selectedTeacherId && (
                   <button onClick={() => setSelectedTeacherId(null)} className="text-sm font-bold text-slate-500 hover:text-slate-800">
-                    Сүзгіні тазалау
+                    РЎТЇР·РіС–РЅС– С‚Р°Р·Р°Р»Р°Сѓ
                   </button>
                 )}
               </div>
@@ -261,15 +253,15 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {(selectedTeacher
                   ? [
-                      { title: 'Оқиғалар', value: selectedTeacher.totalEvents, trend: 'Жеке', trendType: 'neutral' as const, icon: <Calendar className="h-5 w-5" />, color: 'bg-blue-500' },
-                      { title: 'Келмеу', value: selectedTeacher.absences, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserX className="h-5 w-5" />, color: 'bg-red-500' },
-                      { title: 'Кешігу', value: selectedTeacher.latenesses, trend: 'Жеке', trendType: 'neutral' as const, icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
-                      { title: 'Тәртіп көрсеткіші', value: `${selectedTeacher.score}%`, trend: `Рейтингте #${selectedTeacher.rank}`, trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-indigo-600' },
-                      { title: 'БТС емтиханы күні келмеуі', value: selectedTeacherEventCounts['БТС емтиханы күні келмеуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
-                      { title: 'Кеш ескерту', value: selectedTeacherEventCounts['Кеш ескерту'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
-                      { title: 'Ескертпей сабаққа келмеуі', value: selectedTeacherEventCounts['Ескертпей сабаққа келмеуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
-                      { title: 'Ауырып қалуы', value: selectedTeacherEventCounts['Ауырып қалуы'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
-                      { title: 'Семинар / командировкаға кетуі', value: selectedTeacherEventCounts['Семинар / командировкаға кетуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
+                      { title: 'РћТ›РёТ“Р°Р»Р°СЂ', value: selectedTeacher.totalEvents, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <Calendar className="h-5 w-5" />, color: 'bg-blue-500' },
+                      { title: 'РљРµР»РјРµСѓ', value: selectedTeacher.absences, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <UserX className="h-5 w-5" />, color: 'bg-red-500' },
+                      { title: 'РљРµС€С–РіСѓ', value: selectedTeacher.latenesses, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
+                      { title: 'РўУ™СЂС‚С–Рї РєУ©СЂСЃРµС‚РєС–С€С–', value: `${selectedTeacher.score}%`, trend: `Р РµР№С‚РёРЅРіС‚Рµ #${selectedTeacher.rank}`, trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-indigo-600' },
+                      { title: 'Р‘РўРЎ РµРјС‚РёС…Р°РЅС‹ РєТЇРЅС– РєРµР»РјРµСѓС–', value: selectedTeacherEventCounts['Р‘РўРЎ РµРјС‚РёС…Р°РЅС‹ РєТЇРЅС– РєРµР»РјРµСѓС–'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
+                      { title: 'РљРµС€ РµСЃРєРµСЂС‚Сѓ', value: selectedTeacherEventCounts['РљРµС€ РµСЃРєРµСЂС‚Сѓ'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
+                      { title: 'Р•СЃРєРµСЂС‚РїРµР№ СЃР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓС–', value: selectedTeacherEventCounts['Р•СЃРєРµСЂС‚РїРµР№ СЃР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓС–'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
+                      { title: 'РђСѓС‹СЂС‹Рї Т›Р°Р»СѓС‹', value: selectedTeacherEventCounts['РђСѓС‹СЂС‹Рї Т›Р°Р»СѓС‹'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
+                      { title: 'РЎРµРјРёРЅР°СЂ / РєРѕРјР°РЅРґРёСЂРѕРІРєР°Т“Р° РєРµС‚СѓС–', value: selectedTeacherEventCounts['РЎРµРјРёРЅР°СЂ / РєРѕРјР°РЅРґРёСЂРѕРІРєР°Т“Р° РєРµС‚СѓС–'] ?? 0, trend: 'Р–РµРєРµ', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
                     ]
                   : schoolKPIs
                 ).map((kpi, index) => (
@@ -297,7 +289,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                           <p className="mt-2 font-medium text-slate-500">{selectedTeacher.subject}</p>
                           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div className="rounded-2xl bg-slate-50 p-4">
-                              <p className="text-xs font-bold uppercase text-slate-400">Мектептегі орны</p>
+                              <p className="text-xs font-bold uppercase text-slate-400">РњРµРєС‚РµРїС‚РµРіС– РѕСЂРЅС‹</p>
                               <p className="mt-1 text-2xl font-bold text-slate-800">#{selectedTeacher.rank}</p>
                             </div>
                           </div>
@@ -308,8 +300,8 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                     <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                       <div className="mb-8 flex items-center justify-between">
                         <div>
-                          <h3 className="text-lg font-bold text-slate-800">Оқиғалар динамикасы</h3>
-                          <p className="text-sm text-slate-500">Айлар бойынша оқиғалар саны</p>
+                          <h3 className="text-lg font-bold text-slate-800">РћТ›РёТ“Р°Р»Р°СЂ РґРёРЅР°РјРёРєР°СЃС‹</h3>
+                          <p className="text-sm text-slate-500">РђР№Р»Р°СЂ Р±РѕР№С‹РЅС€Р° РѕТ›РёТ“Р°Р»Р°СЂ СЃР°РЅС‹</p>
                         </div>
                       </div>
                       <div className="h-72 w-full">
@@ -334,18 +326,18 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
 
                   <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex items-center justify-between border-b border-slate-100 p-6">
-                      <h3 className="text-lg font-bold text-slate-800">{selectedTeacher ? `Мұғалім оқиғалары: ${selectedTeacher.name}` : 'Соңғы оқиғалар'}</h3>
+                      <h3 className="text-lg font-bold text-slate-800">{selectedTeacher ? `РњТ±Т“Р°Р»С–Рј РѕТ›РёТ“Р°Р»Р°СЂС‹: ${selectedTeacher.name}` : 'РЎРѕТЈТ“С‹ РѕТ›РёТ“Р°Р»Р°СЂ'}</h3>
                       <button onClick={() => setActiveTab('events')} className="text-sm font-bold text-blue-600 hover:underline">
-                        Барлығын көру
+                        Р‘Р°СЂР»С‹Т“С‹РЅ РєУ©СЂСѓ
                       </button>
                     </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-left">
                         <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500">
                           <tr>
-                            <th className="px-6 py-4">Мұғалім</th>
-                            <th className="px-6 py-4">Түрі</th>
-                            <th className="px-6 py-4">Күні</th>
+                            <th className="px-6 py-4">РњТ±Т“Р°Р»С–Рј</th>
+                            <th className="px-6 py-4">РўТЇСЂС–</th>
+                            <th className="px-6 py-4">РљТЇРЅС–</th>
                             <th className="px-6 py-4"></th>
                           </tr>
                         </thead>
@@ -362,7 +354,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                                 <span className="text-sm text-slate-500">{event.date.split('-').reverse().join('.')}</span>
                               </td>
                               <td className="px-6 py-4 text-right">
-                                <button onClick={() => handleDeleteEvent(event.id)} className="rounded-lg p-2 opacity-0 transition-colors hover:bg-rose-50 group-hover:opacity-100" title="Өшіру">
+                                <button onClick={() => handleDeleteEvent(event.id)} className="rounded-lg p-2 opacity-0 transition-colors hover:bg-rose-50 group-hover:opacity-100" title="УЁС€С–СЂСѓ">
                                   <Trash2 className="h-4 w-4 text-rose-400 hover:text-rose-600" />
                                 </button>
                               </td>
@@ -376,7 +368,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
 
                 <div className="space-y-8">
                   <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <h3 className="mb-6 text-lg font-bold text-slate-800">{selectedTeacher ? 'Үздік мұғалімдер' : 'Мұғалімдер рейтингі (Топ 5)'}</h3>
+                    <h3 className="mb-6 text-lg font-bold text-slate-800">{selectedTeacher ? 'Т®Р·РґС–Рє РјТ±Т“Р°Р»С–РјРґРµСЂ' : 'РњТ±Т“Р°Р»С–РјРґРµСЂ СЂРµР№С‚РёРЅРіС– (РўРѕРї 5)'}</h3>
                     <div className="space-y-4">
                       {topTeachers.map((teacher, index) => (
                         <div key={teacher.id} className="flex cursor-pointer items-center gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:border-blue-200" onClick={() => setSelectedTeacherId(teacher.id)}>
@@ -396,7 +388,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                     </div>
                     {!selectedTeacher && (
                       <button onClick={() => setActiveTab('ranking')} className="mt-6 w-full py-3 text-sm font-bold text-blue-600 hover:underline">
-                        Мұғалімдердің толық рейтингі
+                        РњТ±Т“Р°Р»С–РјРґРµСЂРґС–ТЈ С‚РѕР»С‹Т› СЂРµР№С‚РёРЅРіС–
                       </button>
                     )}
                   </div>
@@ -408,8 +400,8 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
           {activeTab === 'ranking' && (
             <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">Мұғалімдер рейтингі</h2>
-                <p className="mt-1 text-sm text-slate-500">Тәртіп және жауапкершілік көрсеткіштері бойынша</p>
+                <h2 className="text-2xl font-bold text-slate-800">РњТ±Т“Р°Р»С–РјРґРµСЂ СЂРµР№С‚РёРЅРіС–</h2>
+                <p className="mt-1 text-sm text-slate-500">РўУ™СЂС‚С–Рї Р¶У™РЅРµ Р¶Р°СѓР°РїРєРµСЂС€С–Р»С–Рє РєУ©СЂСЃРµС‚РєС–С€С‚РµСЂС– Р±РѕР№С‹РЅС€Р°</p>
               </div>
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div className="space-y-4 lg:col-span-2">
@@ -423,13 +415,13 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                         </div>
                         <div className="flex items-center gap-6 text-xs text-slate-400">
                           <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" /> {teacher.totalEvents} оқиға
+                            <Calendar className="h-3 w-3" /> {teacher.totalEvents} РѕТ›РёТ“Р°
                           </span>
                           <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> {teacher.latenesses} кешігу
+                            <Clock className="h-3 w-3" /> {teacher.latenesses} РєРµС€С–РіСѓ
                           </span>
                           <span className="flex items-center gap-1">
-                            <UserMinus className="h-3 w-3" /> {teacher.absences} келмеу
+                            <UserMinus className="h-3 w-3" /> {teacher.absences} РєРµР»РјРµСѓ
                           </span>
                         </div>
                       </div>
@@ -438,24 +430,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                       </div>
                     </motion.div>
                   ))}
-                </div>
-                <div className="space-y-8">
-                  {rankingTeachers.length > 0 && (
-                    <div className="rounded-3xl bg-blue-600 p-6 text-white shadow-xl shadow-blue-600/20">
-                      <h3 className="mb-2 text-lg font-bold">Айдың үздік мұғалімі</h3>
-                      <p className="mt-6 text-xl font-bold">{rankingTeachers[0].name}</p>
-                      <p className="text-sm text-blue-100">{rankingTeachers[0].subject}</p>
-                      <div className="mt-8 flex items-center justify-between border-t border-white/10 pt-6">
-                        <div>
-                          <p className="text-xs font-bold uppercase tracking-wider text-blue-100">Көрсеткіш</p>
-                          <p className="text-2xl font-black">{rankingTeachers[0].score}%</p>
-                        </div>
-                        <button onClick={() => { setShowCongratulateToast(true); setTimeout(() => setShowCongratulateToast(false), 3000); }} className="rounded-xl bg-white px-4 py-2 text-xs font-bold text-blue-600">
-                          Құттықтау
-                        </button>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
