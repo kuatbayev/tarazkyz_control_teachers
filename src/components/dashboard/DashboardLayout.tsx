@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart3, Calendar, Layers, LayoutDashboard, LogOut, Menu, Settings, Users } from 'lucide-react';
+import { BarChart3, Calendar, LayoutDashboard, LogOut, Menu, Settings, Users } from 'lucide-react';
 import type { Profile } from '../../types';
 
 type ActiveTab = 'dashboard' | 'teachers' | 'events' | 'analytics' | 'ranking' | 'settings';
@@ -38,8 +38,8 @@ export function DashboardSidebar({
   return (
     <aside className={`flex flex-col bg-[#0F172A] text-white transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
       <div className="flex items-center gap-3 p-6">
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-blue-600 shadow-md shadow-blue-600/20">
-          <Layers className="h-5 w-5 text-white" />
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white shadow-md">
+          <img src="/alt_logo_2.png" alt="Turkistan Girls BIL logo" className="h-full w-full object-cover" />
         </div>
         {isSidebarOpen && <span className="whitespace-nowrap text-lg font-bold tracking-tight">{profile.schoolName}</span>}
       </div>
