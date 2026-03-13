@@ -100,7 +100,7 @@ export function buildDashboardAnalytics(teachersList: Teacher[], eventsList: Eve
   const schoolKPIs: KPI[] = [
     { title: 'Барлық оқиғалар', value: eventsList.length, trend: eventsList.length > 0 ? '+12%' : '0%', trendType: 'up', icon: <Calendar className="h-5 w-5" />, color: 'bg-blue-500' },
     { title: 'Кешігулер', value: eventsList.filter((event) => event.type === 'Сабаққа кешігу').length, trend: eventsList.length > 0 ? '-5%' : '0%', trendType: 'down', icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
-    { title: 'Өтілмеген сабақтар', value: derivedTeachers.reduce((acc, teacher) => acc + teacher.lostLessons, 0), trend: eventsList.length > 0 ? '+2%' : '0%', trendType: 'up', icon: <UserMinus className="h-5 w-5" />, color: 'bg-red-500' },
+    { title: 'Сабаққа келмеуі', value: derivedTeachers.reduce((acc, teacher) => acc + teacher.lostLessons, 0), trend: eventsList.length > 0 ? '+2%' : '0%', trendType: 'up', icon: <UserMinus className="h-5 w-5" />, color: 'bg-red-500' },
     { title: 'Ауырған күндер', value: derivedTeachers.reduce((acc, teacher) => acc + teacher.sickDays, 0), trend: eventsList.length > 0 ? '+8%' : '0%', trendType: 'up', icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
     { title: 'Орташа рейтинг', value: derivedTeachers.length > 0 ? `${Math.round(derivedTeachers.reduce((acc, teacher) => acc + teacher.score, 0) / derivedTeachers.length)}%` : '0%', trend: 'Жалпы', trendType: 'neutral', icon: <Star className="h-5 w-5" />, color: 'bg-indigo-500' },
     { title: 'Қауіпті аймақтағы мұғалімдер', value: derivedTeachers.filter((teacher) => teacher.score < 75).length, trend: 'Мониторинг', trendType: 'neutral', icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-600' },

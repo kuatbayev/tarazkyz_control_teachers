@@ -256,6 +256,14 @@ export function SettingsTab({
             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
           />
         </div>
+        <div className="mb-4 flex justify-end">
+          <button
+            onClick={handleSaveSettings}
+            className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-500"
+          >
+            Сақтау
+          </button>
+        </div>
         <button
           onClick={() => setIsPasswordModalOpen(true)}
           className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-all hover:bg-slate-50"
