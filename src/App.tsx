@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Users, 
@@ -551,10 +551,45 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
 
   const [showSaveToast, setShowSaveToast] = useState(false);
   const [showCongratulateToast, setShowCongratulateToast] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
-  const handleSaveSettings = () => {
-    setShowSaveToast(true);
-    setTimeout(() => setShowSaveToast(false), 3000);
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoadingData(true);
+      try {
+        const [teachersRes, eventsRes, profileRes] = await Promise.all([
+          supabase.from('teachers').select('*'),
+          supabase.from('events').select('*').order('date', { ascending: false }),
+          supabase.from('profiles').select('*').limit(1).single()
+        ]);
+
+        if (teachersRes.data) setTeachersList(teachersRes.data);
+        if (eventsRes.data) setEventsList(eventsRes.data);
+        if (profileRes.data) setProfile(profileRes.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoadingData(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleSaveSettings = async () => {
+    try {
+      const { error } = await supabase.from('profiles').upsert([
+        { id: 1, ...profile } // Assuming a single profile row with id 1
+      ]);
+      
+      if (error) throw error;
+      
+      setShowSaveToast(true);
+      setTimeout(() => setShowSaveToast(false), 3000);
+    } catch (error: any) {
+      console.error("Error saving settings:", error);
+      alert("Сақтау кезінде қате шықты: " + error.message);
+    }
   };
 
   const handleCongratulate = () => {
@@ -680,9 +715,8 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
     ? eventsList.filter(e => e.teacherId === selectedTeacherId)
     : eventsList;
 
-  const handleAddTeacher = (newTeacher: Partial<Teacher>) => {
-    const teacher: Teacher = {
-      id: `t${Date.now()}`,
+  const handleAddTeacher = async (newTeacher: Partial<Teacher>) => {
+    const teacher = {
       name: newTeacher.name || 'Жаңа мұғалім',
       subject: newTeacher.subject || 'Пән',
       status: 'Белсенді',
@@ -697,29 +731,55 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
       hasDocuments: true,
       ...newTeacher
     };
-    setTeachersList([...teachersList, teacher]);
-    setIsAddModalOpen(false);
+    
+    try {
+      const { data, error } = await supabase.from('teachers').insert([teacher]).select();
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setTeachersList([...teachersList, data[0]]);
+        setIsAddModalOpen(false);
+      }
+    } catch (error: any) {
+      console.error("Error adding teacher:", error);
+      alert("Мұғалімді қосу кезінде қате шықты: " + error.message);
+    }
   };
 
-  const handleDeleteTeacher = (id: string) => {
+  const handleDeleteTeacher = async (id: string) => {
     if (window.confirm('Бұл мұғалімді өшіргіңіз келетініне сенімдісіз бе?')) {
-      setTeachersList(teachersList.filter(t => t.id !== id));
-      setEventsList(eventsList.filter(e => e.teacherId !== id));
-      if (selectedTeacherId === id) {
-        setSelectedTeacherId(null);
+      try {
+        const { error } = await supabase.from('teachers').delete().eq('id', id);
+        if (error) throw error;
+        
+        setTeachersList(teachersList.filter(t => t.id !== id));
+        setEventsList(eventsList.filter(e => e.teacherId !== id));
+        if (selectedTeacherId === id) {
+          setSelectedTeacherId(null);
+        }
+      } catch (error: any) {
+        console.error("Error deleting teacher:", error);
+        alert("Мұғалімді өшіру кезінде қате шықты: " + error.message);
       }
     }
   };
 
-  const handleDeleteEvent = (id: string) => {
+  const handleDeleteEvent = async (id: string) => {
     if (window.confirm('Бұл оқиғаны өшіргіңіз келетініне сенімдісіз бе?')) {
-      setEventsList(eventsList.filter(e => e.id !== id));
+      try {
+        const { error } = await supabase.from('events').delete().eq('id', id);
+        if (error) throw error;
+        
+        setEventsList(eventsList.filter(e => e.id !== id));
+      } catch (error: any) {
+        console.error("Error deleting event:", error);
+        alert("Оқиғаны өшіру кезінде қате шықты: " + error.message);
+      }
     }
   };
 
-  const handleAddEvent = (newEvent: Partial<Event>) => {
-    const event: Event = {
-      id: `e${Date.now()}`,
+  const handleAddEvent = async (newEvent: Partial<Event>) => {
+    const event = {
       teacherId: newEvent.teacherId || '',
       teacherName: newEvent.teacherName || '',
       type: newEvent.type || 'Сабаққа келмеу',
@@ -728,8 +788,19 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
       reason: newEvent.reason || '',
       ...newEvent
     };
-    setEventsList([event, ...eventsList]);
-    setIsAddEventModalOpen(false);
+    
+    try {
+      const { data, error } = await supabase.from('events').insert([event]).select();
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setEventsList([data[0], ...eventsList]);
+        setIsAddEventModalOpen(false);
+      }
+    } catch (error: any) {
+      console.error("Error adding event:", error);
+      alert("Оқиғаны қосу кезінде қате шықты: " + error.message);
+    }
   };
 
   const getScoreColor = (score: number) => {
@@ -743,6 +814,17 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
     if (score >= 75) return 'bg-amber-500';
     return 'bg-rose-500';
   };
+
+  if (isLoadingData) {
+    return (
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center text-slate-900">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+          <p className="font-bold text-slate-500">Деректер жүктелуде...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex text-slate-900">
