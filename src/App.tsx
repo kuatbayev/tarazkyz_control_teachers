@@ -91,7 +91,6 @@ interface Event {
   teacherName: string;
   type: 'Сабаққа келмеу' | 'Сабаққа кешігу' | 'БТС емтиханы күні келмеуі' | 'Кеш ескерту' | 'Ескертпей сабаққа келмеуі' | 'Ауырып қалуы' | 'Семинар / командировкаға кетуі';
   date: string;
-  lesson: number;
   reason: string;
   isCritical?: boolean;
 }
@@ -392,7 +391,6 @@ const AddEventModal = ({
   const [teacherId, setTeacherId] = useState(teachers[0]?.id || '');
   const [type, setType] = useState<Event['type']>('Сабаққа келмеу');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
-  const [lesson, setLesson] = useState(1);
   const [reason, setReason] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -402,8 +400,7 @@ const AddEventModal = ({
       teacherId, 
       teacherName: teacher?.name || 'Белгісіз',
       type, 
-      date: date.split('-').reverse().join('.'), 
-      lesson, 
+      date, 
       reason 
     });
     onClose();
@@ -572,7 +569,6 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
             teacherName: '', // Computed later
             type: e.type,
             date: e.date,
-            lesson: e.lesson || 1,
             reason: e.reason || ''
           })));
         }
@@ -719,7 +715,7 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
   const dynamicLineData = displayMonths.map(m => {
     const monthIndex = monthNames.indexOf(m);
     const count = eventsList.filter(e => {
-      const parts = e.date.split('.');
+      const parts = e.date.split('-');
       if (parts.length === 3) {
         const month = parseInt(parts[1], 10) - 1;
         return month === monthIndex;
@@ -826,7 +822,6 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
       teacher_id: newEvent.teacherId || '',
       type: newEvent.type || 'Сабаққа келмеу',
       date: newEvent.date || new Date().toISOString().split('T')[0],
-      lesson: newEvent.lesson?.toString() || '1',
       reason: newEvent.reason || ''
     };
     
@@ -842,7 +837,6 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
           teacherName: '', // Computed later
           type: e.type,
           date: e.date,
-          lesson: e.lesson || 1,
           reason: e.reason || ''
         }, ...eventsList]);
         setIsAddEventModalOpen(false);
@@ -1374,7 +1368,7 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-sm text-slate-500">{event.date}</span>
+                          <span className="text-sm text-slate-500">{event.date.split('-').reverse().join('.')}</span>
                         </td>
                         <td className="px-6 py-4 text-right">
                           <button 
@@ -1791,7 +1785,7 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                               event.type === 'Ескертпей сабаққа келмеуі' ? 'text-red-600' : 'text-blue-600'
                             }`}>{event.type}</span>
                           </td>
-                          <td className="px-6 py-4 text-sm text-slate-500">{event.date}</td>
+                          <td className="px-6 py-4 text-sm text-slate-500">{event.date.split('-').reverse().join('.')}</td>
                           <td className="px-6 py-4 text-right">
                             <button 
                               onClick={() => handleDeleteEvent(event.id)}
