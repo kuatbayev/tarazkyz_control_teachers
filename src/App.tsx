@@ -120,6 +120,10 @@ const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
     setError(null);
 
     try {
+      if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        throw new Error('Supabase баптаулары (URL немесе KEY) табылмады. Vercel-де Environment Variables қосыңыз.');
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -152,7 +156,7 @@ const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
           <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
             <LayoutDashboard className="text-white w-6 h-6" />
           </div>
-          <span className="text-xl font-bold tracking-tight">Turkistan kyzdar BIL</span>
+          <span className="text-xl font-bold tracking-tight">Turkistan girls BIL</span>
         </div>
       </header>
 
@@ -176,7 +180,6 @@ const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
                 { icon: <Clock className="w-5 h-5 text-blue-500" />, text: 'Кешігулер мен келмеулерді есепке алу' },
                 { icon: <BarChart3 className="w-5 h-5 text-emerald-500" />, text: 'Мұғалімдер бойынша талдау' },
                 { icon: <UserMinus className="w-5 h-5 text-amber-500" />, text: 'Өтілмеген сабақтар мен ауыстырулар' },
-                { icon: <FileText className="w-5 h-5 text-purple-500" />, text: 'Директор үшін дайын есептер' },
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-3 text-slate-300">
                   <div className="p-2 rounded-lg bg-white/5 border border-white/10">
@@ -260,7 +263,6 @@ const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
             </form>
 
             <div className="mt-8 pt-8 border-t border-white/10 flex items-center justify-center gap-4 text-slate-500 text-xs uppercase tracking-widest font-bold">
-              <span>500+ мектеп сенім білдіреді</span>
             </div>
           </div>
         </motion.div>
@@ -268,7 +270,7 @@ const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
 
       {/* Footer */}
       <footer className="container mx-auto px-6 py-8 text-slate-500 text-sm text-center relative z-10">
-        © 2026 Turkistan kyzdar BIL. Барлық құқықтар қорғалған.
+        © 2026 Turkistan girls BIL. Барлық құқықтар қорғалған.
       </footer>
     </div>
   );
@@ -533,7 +535,7 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
     name: 'Асхат Б.',
     email: 'admin@bil.edu.kz',
     phone: '+7 (707) 123-45-67',
-    schoolName: 'Turkistan kyzdar BIL',
+    schoolName: 'Turkistan girls BIL',
     academicYear: '2025-2026 Оқу жылы',
     currentTerm: '3 Тоқсан',
     position: 'Мектеп директоры',
