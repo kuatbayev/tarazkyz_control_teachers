@@ -83,7 +83,7 @@ export default function App() {
   };
 
   return (
-    <div className="font-sans antialiased">
+    <div className="antialiased">
       <Suspense fallback={<AppShellLoader />}>
         <AnimatePresence mode="wait">
           {currentPage === 'landing' ? (

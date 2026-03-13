@@ -8,10 +8,20 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-html {
+html,
+body,
+#root {
   font-family: "Roboto", "Noto Sans", "Segoe UI", sans-serif;
 }
 
 body {
   font-family: inherit;
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
 }
