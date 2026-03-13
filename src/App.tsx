@@ -56,7 +56,12 @@ import {
   Legend
 } from 'recharts';
 import { motion, AnimatePresence } from 'motion/react';
-import { supabase } from './lib/supabase';
+import {
+  hasSupabaseConfig,
+  isLocalAuthBypassEnabled,
+  localAuthStorageKey,
+  supabase,
+} from './lib/supabase';
 
 // --- Types ---
 type Page = 'landing' | 'dashboard';
@@ -98,6 +103,67 @@ interface Event {
 // --- Mock Data ---
 const teachers: Teacher[] = [];
 
+const localMockTeachers: Teacher[] = [
+  {
+    id: 'local-teacher-1',
+    name: 'Ainur Sarsen',
+    subject: 'Mathematics',
+    score: 96,
+    rank: 1,
+    totalEvents: 1,
+    absences: 0,
+    latenesses: 1,
+    sickDays: 0,
+    lostLessons: 0,
+    substitutions: 0,
+    hasDocuments: true,
+  },
+  {
+    id: 'local-teacher-2',
+    name: 'Dias Tolegen',
+    subject: 'Physics',
+    score: 89,
+    rank: 2,
+    totalEvents: 2,
+    absences: 1,
+    latenesses: 0,
+    sickDays: 0,
+    lostLessons: 1,
+    substitutions: 0,
+    hasDocuments: true,
+  },
+];
+
+const localMockEvents: Event[] = [
+  {
+    id: 'local-event-1',
+    teacherId: 'local-teacher-1',
+    teacherName: 'Ainur Sarsen',
+    type: 'Сабаққа кешігу',
+    date: '2026-03-10',
+    reason: 'Morning traffic',
+  },
+  {
+    id: 'local-event-2',
+    teacherId: 'local-teacher-2',
+    teacherName: 'Dias Tolegen',
+    type: 'Сабаққа келмеу',
+    date: '2026-03-08',
+    reason: 'Medical leave',
+  },
+];
+
+const localMockProfile = {
+  name: 'Local Admin',
+  email: 'admin@local.test',
+  phone: '+7 (700) 000-00-00',
+  schoolName: 'Turkistan girls BIL',
+  academicYear: '2025-2026',
+  currentTerm: '3 term',
+  position: 'Local development mode',
+  avatar: null as string | null,
+};
+
 
 
 const COLORS = ['#3B82F6', '#F59E0B', '#EF4444', '#10B981', '#8B5CF6', '#EC4899', '#64748B'];
@@ -116,6 +182,21 @@ const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (!hasSupabaseConfig) {
+      if (isLocalAuthBypassEnabled) {
+        localStorage.setItem(localAuthStorageKey, 'true');
+        onLogin();
+        setLoading(false);
+        return;
+      }
+
+      setError(
+        'Supabase config not found. For localhost add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env.local, or set VITE_ENABLE_LOCAL_AUTH_BYPASS=true for local UI testing.',
+      );
+      setLoading(false);
+      return;
+    }
 
     try {
       if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
@@ -393,8 +474,20 @@ const AddEventModal = ({
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [reason, setReason] = useState('');
 
+  useEffect(() => {
+    if (!teachers.length) {
+      setTeacherId('');
+      return;
+    }
+
+    if (!teachers.some(t => t.id === teacherId)) {
+      setTeacherId(teachers[0].id);
+    }
+  }, [teacherId, teachers]);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!teacherId) return;
     const teacher = teachers.find(t => t.id === teacherId);
     onAdd({ 
       teacherId, 
@@ -403,7 +496,6 @@ const AddEventModal = ({
       date, 
       reason 
     });
-    onClose();
   };
 
   return (
@@ -435,8 +527,10 @@ const AddEventModal = ({
                 <select 
                   value={teacherId}
                   onChange={(e) => setTeacherId(e.target.value)}
+                  disabled={!teachers.length}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                 >
+                  {!teachers.length && <option value="">Мұғалімдер табылмады</option>}
                   {teachers.map(t => (
                     <option key={t.id} value={t.id}>{t.name}</option>
                   ))}
@@ -486,6 +580,7 @@ const AddEventModal = ({
                 </button>
                 <button 
                   type="submit"
+                  disabled={!teachers.length}
                   className="flex-1 py-3 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition-all"
                 >
                   Қосу
@@ -539,6 +634,16 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoadingData(true);
+      if (!hasSupabaseConfig) {
+        if (isLocalAuthBypassEnabled) {
+          setTeachersList(localMockTeachers);
+          setEventsList(localMockEvents);
+          setProfile(localMockProfile);
+        }
+        setIsLoadingData(false);
+        return;
+      }
+
       try {
         const [teachersRes, eventsRes, profileRes] = await Promise.all([
           supabase.from('teachers').select('*'),
@@ -595,6 +700,12 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
   }, []);
 
   const handleSaveSettings = async () => {
+    if (!hasSupabaseConfig) {
+      setShowSaveToast(true);
+      setTimeout(() => setShowSaveToast(false), 3000);
+      return;
+    }
+
     try {
       const { data: existingProfile } = await supabase.from('school_profile').select('id').limit(1).single();
       
@@ -651,9 +762,17 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
     return { name: type, value: count };
   }).filter(item => item.value > 0);
 
+  const eventsWithTeacherNames = eventsList.map(event => {
+    const teacher = teachersList.find(t => t.id === event.teacherId);
+
+    return {
+      ...event,
+      teacherName: teacher?.name || event.teacherName || 'Белгісіз',
+    };
+  });
 
   const derivedTeachers = teachersList.map(teacher => {
-    const teacherEvents = eventsList.filter(e => e.teacherId === teacher.id);
+    const teacherEvents = eventsWithTeacherNames.filter(e => e.teacherId === teacher.id);
     
     let score = 100;
     let absences = 0;
@@ -747,10 +866,31 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
 
   const selectedTeacher = derivedTeachers.find(t => t.id === selectedTeacherId);
   const filteredEvents = selectedTeacherId 
-    ? eventsList.filter(e => e.teacherId === selectedTeacherId)
-    : eventsList;
+    ? eventsWithTeacherNames.filter(e => e.teacherId === selectedTeacherId)
+    : eventsWithTeacherNames;
 
   const handleAddTeacher = async (newTeacher: Partial<Teacher>) => {
+    if (!hasSupabaseConfig) {
+      const localTeacher: Teacher = {
+        id: `local-teacher-${Date.now()}`,
+        name: newTeacher.name || 'New teacher',
+        subject: newTeacher.subject || 'Subject',
+        score: 100,
+        rank: teachersList.length + 1,
+        totalEvents: 0,
+        absences: 0,
+        latenesses: 0,
+        sickDays: 0,
+        lostLessons: 0,
+        substitutions: 0,
+        hasDocuments: true,
+      };
+
+      setTeachersList([...teachersList, localTeacher]);
+      setIsAddModalOpen(false);
+      return;
+    }
+
     const teacherData = {
       name: newTeacher.name || 'Жаңа мұғалім',
       subject: newTeacher.subject || 'Пән',
@@ -786,6 +926,14 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
   };
 
   const handleDeleteTeacher = async (id: string) => {
+    if (!hasSupabaseConfig) {
+      setTeachersList(teachersList.filter(t => t.id !== id));
+      setEventsList(eventsList.filter(e => e.teacherId !== id));
+      if (selectedTeacherId === id) {
+        setSelectedTeacherId(null);
+      }
+      return;
+    }
     if (window.confirm('Бұл мұғалімді өшіргіңіз келетініне сенімдісіз бе?')) {
       try {
         const { error } = await supabase.from('teachers').delete().eq('id', id);
@@ -804,6 +952,10 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
   };
 
   const handleDeleteEvent = async (id: string) => {
+    if (!hasSupabaseConfig) {
+      setEventsList(eventsList.filter(e => e.id !== id));
+      return;
+    }
     if (window.confirm('Бұл оқиғаны өшіргіңіз келетініне сенімдісіз бе?')) {
       try {
         const { error } = await supabase.from('events').delete().eq('id', id);
@@ -818,6 +970,21 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
   };
 
   const handleAddEvent = async (newEvent: Partial<Event>) => {
+    if (!hasSupabaseConfig) {
+      const teacher = teachersList.find(t => t.id === newEvent.teacherId);
+      const localEvent: Event = {
+        id: `local-event-${Date.now()}`,
+        teacherId: newEvent.teacherId || '',
+        teacherName: teacher?.name || 'Unknown teacher',
+        type: newEvent.type || 'Сабаққа келмеу',
+        date: newEvent.date || new Date().toISOString().split('T')[0],
+        reason: newEvent.reason || ''
+      };
+
+      setEventsList([localEvent, ...eventsList]);
+      setIsAddEventModalOpen(false);
+      return;
+    }
     const eventData = {
       teacher_id: newEvent.teacherId || '',
       type: newEvent.type || 'Сабаққа келмеу',
@@ -831,10 +998,11 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
       
       if (data && data.length > 0) {
         const e = data[0];
+        const teacher = teachersList.find(t => t.id === e.teacher_id);
         setEventsList([{
           id: e.id,
           teacherId: e.teacher_id,
-          teacherName: '', // Computed later
+          teacherName: teacher?.name || newEvent.teacherName || 'Белгісіз',
           type: e.type,
           date: e.date,
           reason: e.reason || ''
@@ -1760,7 +1928,7 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {eventsList
+                      {eventsWithTeacherNames
                         .filter(e => eventTypeFilter === 'Барлық түрлері' || e.type === eventTypeFilter)
                         .sort((a, b) => {
                           const valA = a[eventSort.key];
@@ -2066,7 +2234,56 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
 };
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('landing');
+  const [currentPage, setCurrentPage] = useState<Page>(() => {
+    if (isLocalAuthBypassEnabled && localStorage.getItem(localAuthStorageKey) === 'true') {
+      return 'dashboard';
+    }
+
+    return 'landing';
+  });
+
+  useEffect(() => {
+    if (!hasSupabaseConfig) {
+      return;
+    }
+
+    let isMounted = true;
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (isMounted && data.session) {
+        setCurrentPage('dashboard');
+      }
+    });
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (isMounted) {
+        setCurrentPage(session ? 'dashboard' : 'landing');
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      subscription.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogin = () => {
+    setCurrentPage('dashboard');
+  };
+
+  const handleLogout = async () => {
+    if (isLocalAuthBypassEnabled) {
+      localStorage.removeItem(localAuthStorageKey);
+      setCurrentPage('landing');
+      return;
+    }
+
+    if (hasSupabaseConfig) {
+      await supabase.auth.signOut();
+    }
+
+    setCurrentPage('landing');
+  };
 
   return (
     <div className="font-sans antialiased">
@@ -2079,7 +2296,7 @@ export default function App() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <LandingPage onLogin={() => setCurrentPage('dashboard')} />
+            <LandingPage onLogin={handleLogin} />
           </motion.div>
         ) : (
           <motion.div
@@ -2089,7 +2306,7 @@ export default function App() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <DashboardPage onLogout={() => setCurrentPage('landing')} />
+            <DashboardPage onLogout={() => void handleLogout()} />
           </motion.div>
         )}
       </AnimatePresence>
