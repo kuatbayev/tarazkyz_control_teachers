@@ -56,6 +56,7 @@ import {
   Legend
 } from 'recharts';
 import { motion, AnimatePresence } from 'motion/react';
+import { supabase } from './lib/supabase';
 
 // --- Types ---
 type Page = 'landing' | 'dashboard';
@@ -108,6 +109,34 @@ const initialEvents: Event[] = [];
 // --- Components ---
 
 const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setError(error.message);
+      } else {
+        onLogin();
+      }
+    } catch (err: any) {
+      setError(err.message || 'Қате пайда болды');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#0F172A] text-white flex flex-col overflow-hidden relative">
       {/* Background Pattern */}
@@ -171,15 +200,25 @@ const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
             <h2 className="text-2xl font-bold mb-2">Жүйеге кіру</h2>
             <p className="text-slate-400 mb-8">Панельге кіру үшін деректеріңізді енгізіңіз</p>
             
-            <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); onLogin(); }}>
+            {error && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-start gap-3 text-red-400 text-sm">
+                <AlertCircle className="w-5 h-5 shrink-0" />
+                <p>{error}</p>
+              </div>
+            )}
+
+            <form className="space-y-6" onSubmit={handleLogin}>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">Логин немесе Email</label>
+                <label className="block text-sm font-medium text-slate-300 mb-2">Email</label>
                 <div className="relative">
                   <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                   <input 
-                    type="text" 
+                    type="email" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                    placeholder="admin_school_12"
+                    placeholder="admin@school.kz"
+                    required
                   />
                 </div>
               </div>
@@ -189,8 +228,11 @@ const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
                   <Settings className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                   <input 
                     type="password" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                     placeholder="••••••••"
+                    required
                   />
                 </div>
               </div>
@@ -203,9 +245,17 @@ const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
               </div>
               <button 
                 type="submit"
-                className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all transform active:scale-[0.98]"
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
               >
-                Жүйеге кіру
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Күте тұрыңыз...</span>
+                  </>
+                ) : (
+                  <span>Жүйеге кіру</span>
+                )}
               </button>
             </form>
 
@@ -498,10 +548,16 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
   ]);
 
   const [showSaveToast, setShowSaveToast] = useState(false);
+  const [showCongratulateToast, setShowCongratulateToast] = useState(false);
 
   const handleSaveSettings = () => {
     setShowSaveToast(true);
     setTimeout(() => setShowSaveToast(false), 3000);
+  };
+
+  const handleCongratulate = () => {
+    setShowCongratulateToast(true);
+    setTimeout(() => setShowCongratulateToast(false), 3000);
   };
 
   const toggleNotification = (id: string) => {
@@ -653,6 +709,12 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
     }
   };
 
+  const handleDeleteEvent = (id: string) => {
+    if (window.confirm('Бұл оқиғаны өшіргіңіз келетініне сенімдісіз бе?')) {
+      setEventsList(eventsList.filter(e => e.id !== id));
+    }
+  };
+
   const handleAddEvent = (newEvent: Partial<Event>) => {
     const event: Event = {
       id: `e${Date.now()}`,
@@ -682,6 +744,31 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex text-slate-900">
+      <AnimatePresence>
+        {showSaveToast && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-24 right-8 bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-3"
+          >
+            <CheckCircle2 className="w-5 h-5" />
+            <span className="font-bold text-sm">Өзгерістер сәтті сақталды!</span>
+          </motion.div>
+        )}
+        {showCongratulateToast && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed top-24 right-8 bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-3"
+          >
+            <CheckCircle2 className="w-5 h-5" />
+            <span className="font-bold text-sm">Құттықтау хаты жіберілді!</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
       <aside className={`bg-[#0F172A] text-white transition-all duration-300 flex flex-col ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
         <div className="p-6 flex items-center gap-3">
@@ -1118,7 +1205,12 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                 <h3 className="text-lg font-bold text-slate-800">
                   {selectedTeacher ? `Мұғалім оқиғалары: ${selectedTeacher.name}` : 'Соңғы оқиғалар'}
                 </h3>
-                <button className="text-blue-600 text-sm font-bold hover:underline">Барлығын көру</button>
+                <button 
+                  onClick={() => setActiveTab('events')}
+                  className="text-blue-600 text-sm font-bold hover:underline"
+                >
+                  Барлығын көру
+                </button>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
@@ -1160,8 +1252,12 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                           <span className="text-sm font-bold text-slate-700">{event.lesson || '—'}</span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <button className="p-2 hover:bg-slate-200 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
-                            <ChevronRight className="w-4 h-4 text-slate-400" />
+                          <button 
+                            onClick={() => handleDeleteEvent(event.id)}
+                            className="p-2 hover:bg-rose-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                            title="Өшіру"
+                          >
+                            <Trash2 className="w-4 h-4 text-rose-400 hover:text-rose-600" />
                           </button>
                         </td>
                       </tr>
@@ -1244,7 +1340,12 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                           <p className="text-blue-100 text-xs uppercase tracking-wider font-bold">Көрсеткіш</p>
                           <p className="text-2xl font-black">{derivedTeachers.sort((a, b) => b.score - a.score)[0].score}%</p>
                         </div>
-                        <button className="px-4 py-2 bg-white text-blue-600 rounded-xl text-xs font-bold">Құттықтау</button>
+                        <button 
+                          onClick={handleCongratulate}
+                          className="px-4 py-2 bg-white text-blue-600 rounded-xl text-xs font-bold"
+                        >
+                          Құттықтау
+                        </button>
                       </div>
                     </div>
                   )}
@@ -1569,7 +1670,13 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                           <td className="px-6 py-4 text-sm text-slate-500">{event.date}</td>
                           <td className="px-6 py-4 text-sm text-slate-500">{event.lesson || '-'}</td>
                           <td className="px-6 py-4 text-right">
-                            <button className="text-blue-600 font-bold text-xs hover:underline">Толығырақ</button>
+                            <button 
+                              onClick={() => handleDeleteEvent(event.id)}
+                              className="p-2 bg-slate-100 text-slate-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 transition-all"
+                              title="Өшіру"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -1646,20 +1753,6 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
           {activeTab === 'settings' && (
             <div className="space-y-8 max-w-4xl relative">
               <h2 className="text-2xl font-bold text-slate-800">Баптаулар</h2>
-              
-              <AnimatePresence>
-                {showSaveToast && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    className="fixed top-24 right-8 bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-3"
-                  >
-                    <CheckCircle2 className="w-5 h-5" />
-                    <span className="font-bold text-sm">Өзгерістер сәтті сақталды!</span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
 
               <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="p-8 border-b border-slate-100">
