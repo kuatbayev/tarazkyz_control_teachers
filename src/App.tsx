@@ -461,27 +461,14 @@ const AddEventModal = ({
                   <option value="Семинар / командировкаға кетуі">Семинар / командировкаға кетуі</option>
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Күні</label>
-                  <input 
-                    type="date" 
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-slate-700 mb-2">Сабақ</label>
-                  <input 
-                    type="number" 
-                    min="1"
-                    max="10"
-                    value={lesson}
-                    onChange={(e) => setLesson(parseInt(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-bold text-slate-700 mb-2">Күні</label>
+                <input 
+                  type="date" 
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                />
               </div>
               <div>
                 <label className="block text-sm font-bold text-slate-700 mb-2">Себебі / Түсініктеме</label>
@@ -1361,7 +1348,6 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                       <th className="px-6 py-4">Мұғалім</th>
                       <th className="px-6 py-4">Түрі</th>
                       <th className="px-6 py-4">Күні</th>
-                      <th className="px-6 py-4">Сабақ</th>
                       <th className="px-6 py-4"></th>
                     </tr>
                   </thead>
@@ -1389,9 +1375,6 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                         </td>
                         <td className="px-6 py-4">
                           <span className="text-sm text-slate-500">{event.date}</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm font-bold text-slate-700">{event.lesson || '—'}</span>
                         </td>
                         <td className="px-6 py-4 text-right">
                           <button 
@@ -1779,7 +1762,6 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                             ) : <ArrowUpDown className="w-3 h-3 opacity-30" />}
                           </div>
                         </th>
-                        <th className="px-6 py-4">Сабақ</th>
                         <th className="px-6 py-4"></th>
                       </tr>
                     </thead>
@@ -1810,7 +1792,6 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                             }`}>{event.type}</span>
                           </td>
                           <td className="px-6 py-4 text-sm text-slate-500">{event.date}</td>
-                          <td className="px-6 py-4 text-sm text-slate-500">{event.lesson || '-'}</td>
                           <td className="px-6 py-4 text-right">
                             <button 
                               onClick={() => handleDeleteEvent(event.id)}
