@@ -76,13 +76,14 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
         supabase.from('school_profile').select('id').limit(1).single(),
         supabase.auth.getUser(),
       ]);
+      const normalizedEmail = profile.email.trim();
 
       const schoolProfileData = {
         school_name: profile.schoolName,
         director_name: profile.name,
         academic_year: profile.academicYear,
         current_term: profile.currentTerm,
-        email: profile.email,
+        email: normalizedEmail,
         avatar_url: profile.avatar,
       };
 
@@ -94,6 +95,11 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
 
       const userId = authData.user?.id;
       if (userId) {
+        if (normalizedEmail && authData.user?.email !== normalizedEmail) {
+          const { error: authEmailError } = await supabase.auth.updateUser({ email: normalizedEmail });
+          if (authEmailError) throw authEmailError;
+        }
+
         const adminProfileResult = await supabase.from('admin_profiles').upsert(
           {
             id: userId,

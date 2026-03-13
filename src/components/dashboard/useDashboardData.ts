@@ -87,7 +87,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       if (profileRes.data) {
         setProfile({
           name: adminProfileRes.data?.full_name || profileRes.data.director_name,
-          email: authData.user?.email || profileRes.data.email || '',
+          email: profileRes.data.email || authData.user?.email || '',
           schoolName: profileRes.data.school_name,
           academicYear: profileRes.data.academic_year,
           currentTerm: profileRes.data.current_term,
