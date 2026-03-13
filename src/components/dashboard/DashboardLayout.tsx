@@ -29,9 +29,9 @@ export function DashboardSidebar({
   const items = [
     { id: 'dashboard', icon: <LayoutDashboard className="h-5 w-5" />, label: 'Басқару панелі' },
     { id: 'ranking', icon: <BarChart3 className="h-5 w-5" />, label: 'Рейтинг' },
+    { id: 'analytics', icon: <BarChart3 className="h-5 w-5" />, label: 'Аналитика' },
     { id: 'teachers', icon: <Users className="h-5 w-5" />, label: 'Мұғалімдер' },
     { id: 'events', icon: <Calendar className="h-5 w-5" />, label: 'Оқиғалар' },
-    { id: 'analytics', icon: <BarChart3 className="h-5 w-5" />, label: 'Аналитика' },
     { id: 'settings', icon: <Settings className="h-5 w-5" />, label: 'Баптаулар' },
   ] as const;
 
