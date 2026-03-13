@@ -118,7 +118,7 @@ export function TeachersTab({
                   }
                 >
                   <div className="flex items-center justify-center gap-2">
-                    Score
+                    Рейтинг
                     {teacherSort.key === 'score' ? (
                       teacherSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
                     ) : (

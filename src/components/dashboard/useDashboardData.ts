@@ -104,8 +104,8 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
     if (!hasSupabaseConfig) {
       const localTeacher: Teacher = {
         id: `local-teacher-${Date.now()}`,
-        name: newTeacher.name || 'New teacher',
-        subject: newTeacher.subject || 'Subject',
+        name: newTeacher.name || 'Жаңа мұғалім',
+        subject: newTeacher.subject || 'Пән',
         score: 100,
         rank: teachersList.length + 1,
         totalEvents: 0,
@@ -161,7 +161,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
   };
 
   const handleDeleteTeacher = async (id: string) => {
-    const confirmedTeacherDelete = !hasSupabaseConfig ? window.confirm('Delete this teacher?') : true;
+    const confirmedTeacherDelete = window.confirm('Осы мұғалімді шынымен өшіргіңіз келе ме?');
     if (!confirmedTeacherDelete) return;
 
     if (!hasSupabaseConfig) {
@@ -189,7 +189,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
   };
 
   const handleDeleteEvent = async (id: string) => {
-    const confirmedEventDelete = !hasSupabaseConfig ? window.confirm('Delete this event?') : true;
+    const confirmedEventDelete = window.confirm('Осы оқиғаны шынымен өшіргіңіз келе ме?');
     if (!confirmedEventDelete) return;
 
     if (!hasSupabaseConfig) {
@@ -214,7 +214,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       const localEvent: Event = {
         id: `local-event-${Date.now()}`,
         teacherId: newEvent.teacherId || '',
-        teacherName: teacher?.name || 'Unknown teacher',
+        teacherName: teacher?.name || 'Белгісіз мұғалім',
         type: newEvent.type || DEFAULT_EVENT_TYPE,
         date: newEvent.date || new Date().toISOString().split('T')[0],
         reason: newEvent.reason || '',

@@ -9,7 +9,6 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
-  FileText,
   Trash2,
   UserMinus,
   UserX,
@@ -53,11 +52,20 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   const [showSaveToast, setShowSaveToast] = useState(false);
   const [showCongratulateToast, setShowCongratulateToast] = useState(false);
 
-  const { teachersList, eventsList, profile, setProfile, isLoadingData, handleAddTeacher, handleDeleteTeacher, handleDeleteEvent, handleAddEvent } =
-    useDashboardData({
-      selectedTeacherId,
-      clearSelectedTeacher: () => setSelectedTeacherId(null),
-    });
+  const {
+    teachersList,
+    eventsList,
+    profile,
+    setProfile,
+    isLoadingData,
+    handleAddTeacher,
+    handleDeleteTeacher,
+    handleDeleteEvent,
+    handleAddEvent,
+  } = useDashboardData({
+    selectedTeacherId,
+    clearSelectedTeacher: () => setSelectedTeacherId(null),
+  });
 
   const handleSaveSettings = async () => {
     if (!hasSupabaseConfig) {
@@ -129,13 +137,13 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
       <AnimatePresence>
         {showSaveToast && (
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="fixed right-8 top-24 z-[9999] flex items-center gap-3 rounded-2xl bg-emerald-600 px-6 py-3 text-white shadow-xl">
-            <CheckCircle2 className="w-5 h-5" />
+            <CheckCircle2 className="h-5 w-5" />
             <span className="text-sm font-bold">Өзгерістер сәтті сақталды!</span>
           </motion.div>
         )}
         {showCongratulateToast && (
           <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="fixed right-8 top-24 z-[9999] flex items-center gap-3 rounded-2xl bg-blue-600 px-6 py-3 text-white shadow-xl">
-            <CheckCircle2 className="w-5 h-5" />
+            <CheckCircle2 className="h-5 w-5" />
             <span className="text-sm font-bold">Құттықтау хаты жіберілді!</span>
           </motion.div>
         )}
@@ -161,8 +169,12 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
               <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                 <div className="flex flex-wrap items-center gap-3">
                   <select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500" value={selectedTeacherId || ''} onChange={(e) => setSelectedTeacherId(e.target.value || null)}>
-                    <option value="">Барлық мұғалімдер (Мектепті шолу)</option>
-                    {derivedTeachers.map((teacher) => <option key={teacher.id} value={teacher.id}>{teacher.name}</option>)}
+                    <option value="">Барлық мұғалімдер (мектеп шолуы)</option>
+                    {derivedTeachers.map((teacher) => (
+                      <option key={teacher.id} value={teacher.id}>
+                        {teacher.name}
+                      </option>
+                    ))}
                   </select>
                   <select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500">
                     <option>2025-2026 оқу жылы</option>
@@ -176,16 +188,20 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                     <option>4 тоқсан</option>
                   </select>
                 </div>
-                {selectedTeacherId && <button onClick={() => setSelectedTeacherId(null)} className="text-sm font-bold text-slate-500 hover:text-slate-800">Сүзгіні тазалау</button>}
+                {selectedTeacherId && (
+                  <button onClick={() => setSelectedTeacherId(null)} className="text-sm font-bold text-slate-500 hover:text-slate-800">
+                    Сүзгіні тазалау
+                  </button>
+                )}
               </div>
 
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
                 {(selectedTeacher
                   ? [
-                      { title: 'Оқиғалар', value: selectedTeacher.totalEvents, trend: 'Жеке', trendType: 'neutral' as const, icon: <Calendar className="w-5 h-5" />, color: 'bg-blue-500' },
-                      { title: 'Келмеу', value: selectedTeacher.absences, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserX className="w-5 h-5" />, color: 'bg-red-500' },
-                      { title: 'Кешігу', value: selectedTeacher.latenesses, trend: 'Жеке', trendType: 'neutral' as const, icon: <Clock className="w-5 h-5" />, color: 'bg-amber-500' },
-                      { title: 'Тәртіп көрсеткіші', value: `${selectedTeacher.score}%`, trend: `Рейтингте #${selectedTeacher.rank}`, trendType: 'neutral' as const, icon: <AlertTriangle className="w-5 h-5" />, color: 'bg-indigo-600' },
+                      { title: 'Оқиғалар', value: selectedTeacher.totalEvents, trend: 'Жеке', trendType: 'neutral' as const, icon: <Calendar className="h-5 w-5" />, color: 'bg-blue-500' },
+                      { title: 'Келмеу', value: selectedTeacher.absences, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserX className="h-5 w-5" />, color: 'bg-red-500' },
+                      { title: 'Кешігу', value: selectedTeacher.latenesses, trend: 'Жеке', trendType: 'neutral' as const, icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
+                      { title: 'Тәртіп көрсеткіші', value: `${selectedTeacher.score}%`, trend: `Рейтингте #${selectedTeacher.rank}`, trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-indigo-600' },
                     ]
                   : schoolKPIs
                 ).map((kpi, index) => (
@@ -259,7 +275,9 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                   <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
                     <div className="flex items-center justify-between border-b border-slate-100 p-6">
                       <h3 className="text-lg font-bold text-slate-800">{selectedTeacher ? `Мұғалім оқиғалары: ${selectedTeacher.name}` : 'Соңғы оқиғалар'}</h3>
-                      <button onClick={() => setActiveTab('events')} className="text-sm font-bold text-blue-600 hover:underline">Барлығын көру</button>
+                      <button onClick={() => setActiveTab('events')} className="text-sm font-bold text-blue-600 hover:underline">
+                        Барлығын көру
+                      </button>
                     </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-left">
@@ -274,9 +292,15 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                         <tbody className="divide-y divide-slate-100">
                           {recentEvents.map((event) => (
                             <tr key={event.id} className="group transition-colors hover:bg-slate-50">
-                              <td className="px-6 py-4"><span className="text-sm font-bold text-slate-700">{event.teacherName}</span></td>
-                              <td className="px-6 py-4"><span className="text-sm text-slate-600">{event.type}</span></td>
-                              <td className="px-6 py-4"><span className="text-sm text-slate-500">{event.date.split('-').reverse().join('.')}</span></td>
+                              <td className="px-6 py-4">
+                                <span className="text-sm font-bold text-slate-700">{event.teacherName}</span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className="text-sm text-slate-600">{event.type}</span>
+                              </td>
+                              <td className="px-6 py-4">
+                                <span className="text-sm text-slate-500">{event.date.split('-').reverse().join('.')}</span>
+                              </td>
                               <td className="px-6 py-4 text-right">
                                 <button onClick={() => handleDeleteEvent(event.id)} className="rounded-lg p-2 opacity-0 transition-colors hover:bg-rose-50 group-hover:opacity-100" title="Өшіру">
                                   <Trash2 className="h-4 w-4 text-rose-400 hover:text-rose-600" />
@@ -310,7 +334,11 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                         </div>
                       ))}
                     </div>
-                    {!selectedTeacher && <button onClick={() => setActiveTab('ranking')} className="mt-6 w-full py-3 text-sm font-bold text-blue-600 hover:underline">Мұғалімдердің толық рейтингі</button>}
+                    {!selectedTeacher && (
+                      <button onClick={() => setActiveTab('ranking')} className="mt-6 w-full py-3 text-sm font-bold text-blue-600 hover:underline">
+                        Мұғалімдердің толық рейтингі
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -334,9 +362,15 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                           <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">{teacher.subject}</span>
                         </div>
                         <div className="flex items-center gap-6 text-xs text-slate-400">
-                          <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {teacher.totalEvents} оқиға</span>
-                          <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {teacher.latenesses} кешігу</span>
-                          <span className="flex items-center gap-1"><UserMinus className="h-3 w-3" /> {teacher.absences} келмеу</span>
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" /> {teacher.totalEvents} оқиға
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" /> {teacher.latenesses} кешігу
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <UserMinus className="h-3 w-3" /> {teacher.absences} келмеу
+                          </span>
                         </div>
                       </div>
                       <div className="text-right">
@@ -356,7 +390,9 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                           <p className="text-xs font-bold uppercase tracking-wider text-blue-100">Көрсеткіш</p>
                           <p className="text-2xl font-black">{rankingTeachers[0].score}%</p>
                         </div>
-                        <button onClick={() => { setShowCongratulateToast(true); setTimeout(() => setShowCongratulateToast(false), 3000); }} className="rounded-xl bg-white px-4 py-2 text-xs font-bold text-blue-600">Құттықтау</button>
+                        <button onClick={() => { setShowCongratulateToast(true); setTimeout(() => setShowCongratulateToast(false), 3000); }} className="rounded-xl bg-white px-4 py-2 text-xs font-bold text-blue-600">
+                          Құттықтау
+                        </button>
                       </div>
                     </div>
                   )}
@@ -365,10 +401,46 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
             </div>
           )}
 
-          {activeTab === 'teachers' && <TeachersTab derivedTeachers={derivedTeachers} searchTerm={searchTerm} subjectFilter={subjectFilter} teacherSort={teacherSort} setSearchTerm={setSearchTerm} setSubjectFilter={setSubjectFilter} setTeacherSort={setTeacherSort} getScoreBg={getScoreBg} getScoreColor={getScoreColor} onAddTeacher={() => setIsAddModalOpen(true)} onDeleteTeacher={handleDeleteTeacher} onOpenTeacherProfile={(id) => { setSelectedTeacherId(id); setActiveTab('dashboard'); }} />}
-          {activeTab === 'events' && <EventsTab eventSort={eventSort} eventTypeFilter={eventTypeFilter} eventsWithTeacherNames={eventsWithTeacherNames} setEventSort={setEventSort} setEventTypeFilter={setEventTypeFilter} onAddEvent={() => setIsAddEventModalOpen(true)} onDeleteEvent={handleDeleteEvent} />}
+          {activeTab === 'teachers' && (
+            <TeachersTab
+              derivedTeachers={derivedTeachers}
+              searchTerm={searchTerm}
+              subjectFilter={subjectFilter}
+              teacherSort={teacherSort}
+              setSearchTerm={setSearchTerm}
+              setSubjectFilter={setSubjectFilter}
+              setTeacherSort={setTeacherSort}
+              getScoreBg={getScoreBg}
+              getScoreColor={getScoreColor}
+              onAddTeacher={() => setIsAddModalOpen(true)}
+              onDeleteTeacher={handleDeleteTeacher}
+              onOpenTeacherProfile={(id) => {
+                setSelectedTeacherId(id);
+                setActiveTab('dashboard');
+              }}
+            />
+          )}
+          {activeTab === 'events' && (
+            <EventsTab
+              eventSort={eventSort}
+              eventTypeFilter={eventTypeFilter}
+              eventsWithTeacherNames={eventsWithTeacherNames}
+              setEventSort={setEventSort}
+              setEventTypeFilter={setEventTypeFilter}
+              onAddEvent={() => setIsAddEventModalOpen(true)}
+              onDeleteEvent={handleDeleteEvent}
+            />
+          )}
           {activeTab === 'analytics' && <AnalyticsTab barData={barData} colors={COLORS} dynamicLineData={dynamicLineData} pieData={pieData} />}
-          {activeTab === 'settings' && <SettingsTab handleSaveSettings={handleSaveSettings} notificationSettings={notificationSettings} profile={profile} setProfile={setProfile} toggleNotification={toggleNotification} />}
+          {activeTab === 'settings' && (
+            <SettingsTab
+              handleSaveSettings={handleSaveSettings}
+              notificationSettings={notificationSettings}
+              profile={profile}
+              setProfile={setProfile}
+              toggleNotification={toggleNotification}
+            />
+          )}
         </div>
 
         <AddTeacherModal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} onAdd={handleAddTeacher} />
