@@ -99,6 +99,31 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
     }
   };
 
+  const handleChangePassword = async (password: string) => {
+    if (!hasSupabaseConfig) {
+      return {
+        success: false,
+        message: 'Локалды режимде құпия сөзді өзгерту қолжетімсіз.',
+      };
+    }
+
+    try {
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw error;
+
+      return {
+        success: true,
+        message: 'Құпия сөз сәтті өзгертілді.',
+      };
+    } catch (error: any) {
+      console.error('Error changing password:', error);
+      return {
+        success: false,
+        message: error.message || 'Құпия сөзді өзгерту кезінде қате шықты.',
+      };
+    }
+  };
+
   const toggleNotification = (id: string) => {
     setNotificationSettings((prev) => prev.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item)));
   };
@@ -434,6 +459,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
           {activeTab === 'analytics' && <AnalyticsTab barData={barData} colors={COLORS} dynamicLineData={dynamicLineData} pieData={pieData} />}
           {activeTab === 'settings' && (
             <SettingsTab
+              handleChangePassword={handleChangePassword}
               handleSaveSettings={handleSaveSettings}
               notificationSettings={notificationSettings}
               profile={profile}
