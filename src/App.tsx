@@ -65,7 +65,6 @@ interface Teacher {
   id: string;
   name: string;
   subject: string;
-  status: 'Белсенді' | 'Ауырып қалды' | 'Демалыста';
   score: number;
   rank: number;
   totalEvents: number;
@@ -560,12 +559,48 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
         const [teachersRes, eventsRes, profileRes] = await Promise.all([
           supabase.from('teachers').select('*'),
           supabase.from('events').select('*').order('date', { ascending: false }),
-          supabase.from('profiles').select('*').limit(1).single()
+          supabase.from('school_profile').select('*').limit(1).single()
         ]);
 
-        if (teachersRes.data) setTeachersList(teachersRes.data);
-        if (eventsRes.data) setEventsList(eventsRes.data);
-        if (profileRes.data) setProfile(profileRes.data);
+        if (teachersRes.data) {
+          setTeachersList(teachersRes.data.map(t => ({
+            id: t.id,
+            name: t.name,
+            subject: t.subject,
+            score: 100, // Computed later
+            rank: 0, // Computed later
+            totalEvents: 0,
+            absences: 0,
+            latenesses: 0,
+            sickDays: 0,
+            lostLessons: 0,
+            substitutions: 0,
+            hasDocuments: t.has_documents
+          })));
+        }
+        if (eventsRes.data) {
+          setEventsList(eventsRes.data.map(e => ({
+            id: e.id,
+            teacherId: e.teacher_id,
+            teacherName: '', // Computed later
+            type: e.type,
+            date: e.date,
+            lesson: e.lesson || 1,
+            reason: e.reason || ''
+          })));
+        }
+        if (profileRes.data) {
+          setProfile({
+            name: profileRes.data.director_name,
+            email: profileRes.data.email || '',
+            phone: profileRes.data.phone || '',
+            schoolName: profileRes.data.school_name,
+            academicYear: profileRes.data.academic_year,
+            currentTerm: profileRes.data.current_term,
+            position: 'Мектеп директоры',
+            avatar: profileRes.data.avatar_url
+          });
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -578,9 +613,26 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
 
   const handleSaveSettings = async () => {
     try {
-      const { error } = await supabase.from('profiles').upsert([
-        { id: 1, ...profile } // Assuming a single profile row with id 1
-      ]);
+      const { data: existingProfile } = await supabase.from('school_profile').select('id').limit(1).single();
+      
+      const updateData = {
+        school_name: profile.schoolName,
+        director_name: profile.name,
+        academic_year: profile.academicYear,
+        current_term: profile.currentTerm,
+        email: profile.email,
+        phone: profile.phone,
+        avatar_url: profile.avatar
+      };
+
+      let error;
+      if (existingProfile) {
+        const res = await supabase.from('school_profile').update(updateData).eq('id', existingProfile.id);
+        error = res.error;
+      } else {
+        const res = await supabase.from('school_profile').insert([updateData]);
+        error = res.error;
+      }
       
       if (error) throw error;
       
@@ -716,28 +768,32 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
     : eventsList;
 
   const handleAddTeacher = async (newTeacher: Partial<Teacher>) => {
-    const teacher = {
+    const teacherData = {
       name: newTeacher.name || 'Жаңа мұғалім',
       subject: newTeacher.subject || 'Пән',
-      status: 'Белсенді',
-      score: 100,
-      rank: teachersList.length + 1,
-      totalEvents: 0,
-      absences: 0,
-      latenesses: 0,
-      sickDays: 0,
-      lostLessons: 0,
-      substitutions: 0,
-      hasDocuments: true,
-      ...newTeacher
+      has_documents: true
     };
     
     try {
-      const { data, error } = await supabase.from('teachers').insert([teacher]).select();
+      const { data, error } = await supabase.from('teachers').insert([teacherData]).select();
       if (error) throw error;
       
       if (data && data.length > 0) {
-        setTeachersList([...teachersList, data[0]]);
+        const t = data[0];
+        setTeachersList([...teachersList, {
+          id: t.id,
+          name: t.name,
+          subject: t.subject,
+          score: 100,
+          rank: teachersList.length + 1,
+          totalEvents: 0,
+          absences: 0,
+          latenesses: 0,
+          sickDays: 0,
+          lostLessons: 0,
+          substitutions: 0,
+          hasDocuments: t.has_documents
+        }]);
         setIsAddModalOpen(false);
       }
     } catch (error: any) {
@@ -779,22 +835,29 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
   };
 
   const handleAddEvent = async (newEvent: Partial<Event>) => {
-    const event = {
-      teacherId: newEvent.teacherId || '',
-      teacherName: newEvent.teacherName || '',
+    const eventData = {
+      teacher_id: newEvent.teacherId || '',
       type: newEvent.type || 'Сабаққа келмеу',
-      date: newEvent.date || new Date().toLocaleDateString(),
-      lesson: newEvent.lesson || 1,
-      reason: newEvent.reason || '',
-      ...newEvent
+      date: newEvent.date || new Date().toISOString().split('T')[0],
+      lesson: newEvent.lesson?.toString() || '1',
+      reason: newEvent.reason || ''
     };
     
     try {
-      const { data, error } = await supabase.from('events').insert([event]).select();
+      const { data, error } = await supabase.from('events').insert([eventData]).select();
       if (error) throw error;
       
       if (data && data.length > 0) {
-        setEventsList([data[0], ...eventsList]);
+        const e = data[0];
+        setEventsList([{
+          id: e.id,
+          teacherId: e.teacher_id,
+          teacherName: '', // Computed later
+          type: e.type,
+          date: e.date,
+          lesson: e.lesson || 1,
+          reason: e.reason || ''
+        }, ...eventsList]);
         setIsAddEventModalOpen(false);
       }
     } catch (error: any) {
@@ -1018,11 +1081,6 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
                   <div className="flex-1 text-center md:text-left">
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-2">
                       <h2 className="text-3xl font-bold text-slate-800">{selectedTeacher.name}</h2>
-                      <span className={`px-3 py-1 rounded-full text-xs font-bold border ${
-                        selectedTeacher.status === 'Белсенді' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'
-                      }`}>
-                        {selectedTeacher.status}
-                      </span>
                     </div>
                     <p className="text-slate-500 font-medium mb-6">{selectedTeacher.subject} • Еңбек өтілі: 12 жыл • Кабинет: 304</p>
                     <div className="flex flex-wrap items-center justify-center md:justify-start gap-6">
