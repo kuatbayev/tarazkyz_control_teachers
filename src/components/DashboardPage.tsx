@@ -294,19 +294,11 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                         </div>
                         <div className="flex-1 text-center md:text-left">
                           <h2 className="text-3xl font-bold text-slate-800">{selectedTeacher.name}</h2>
-                          <p className="mt-2 font-medium text-slate-500">{selectedTeacher.subject} • Еңбек өтілі: 12 жыл • Кабинет: 304</p>
+                          <p className="mt-2 font-medium text-slate-500">{selectedTeacher.subject}</p>
                           <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
                             <div className="rounded-2xl bg-slate-50 p-4">
                               <p className="text-xs font-bold uppercase text-slate-400">Мектептегі орны</p>
                               <p className="mt-1 text-2xl font-bold text-slate-800">#{selectedTeacher.rank}</p>
-                            </div>
-                            <div className="rounded-2xl bg-slate-50 p-4">
-                              <p className="text-xs font-bold uppercase text-slate-400">Өтілмеген сабақтар</p>
-                              <p className="mt-1 text-2xl font-bold text-rose-600">{selectedTeacher.lostLessons} сағ.</p>
-                            </div>
-                            <div className="rounded-2xl bg-slate-50 p-4">
-                              <p className="text-xs font-bold uppercase text-slate-400">Құжаттар</p>
-                              <p className="mt-1 text-2xl font-bold text-slate-800">{selectedTeacher.hasDocuments ? 'Бар' : 'Жоқ'}</p>
                             </div>
                           </div>
                         </div>
