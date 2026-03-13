@@ -152,7 +152,9 @@ const LandingPage = ({ onLogin }: { onLogin: () => void }) => {
       {/* Header */}
       <header className="container mx-auto px-6 py-8 flex justify-between items-center relative z-10">
         <div className="flex items-center gap-3">
-          <img src="/alt_logo_2.png" alt="Logo" className="w-10 h-10 object-contain" />
+          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
+            <Layers className="w-6 h-6 text-white" />
+          </div>
           <span className="text-xl font-bold tracking-tight">Turkistan girls BIL</span>
         </div>
       </header>
@@ -917,7 +919,9 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
       {/* Sidebar */}
       <aside className={`bg-[#0F172A] text-white transition-all duration-300 flex flex-col ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
         <div className="p-6 flex items-center gap-3">
-          <img src="/alt_logo_2.png" alt="Logo" className="w-8 h-8 object-contain flex-shrink-0" />
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md shadow-blue-600/20">
+            <Layers className="w-5 h-5 text-white" />
+          </div>
           {isSidebarOpen && <span className="font-bold text-lg tracking-tight whitespace-nowrap">{profile.schoolName}</span>}
         </div>
 
