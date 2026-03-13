@@ -39,7 +39,7 @@ export function DashboardSidebar({
     <aside className={`flex flex-col bg-[#0F172A] text-white transition-all duration-300 ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
       <div className="flex items-center gap-3 p-6">
         <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white shadow-md">
-          <img src="/alt_logo_2.png" alt="Turkistan Girls BIL logo" className="h-full w-full object-cover" />
+          <img src="/alt_logo-2.svg" alt="Turkistan Girls BIL logo" className="h-full w-full object-cover" />
         </div>
         {isSidebarOpen && <span className="whitespace-nowrap text-lg font-bold tracking-tight">{profile.schoolName}</span>}
       </div>
