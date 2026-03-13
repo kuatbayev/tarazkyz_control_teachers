@@ -59,6 +59,9 @@ import { AddEventModal } from './AddEventModal';
 import { AddTeacherModal } from './AddTeacherModal';
 import { COLORS } from '../data/mockData';
 import { buildDashboardAnalytics } from './dashboard/analytics';
+import { EventsTab } from './dashboard/EventsTab';
+import { DashboardSidebar, DashboardTopBar } from './dashboard/DashboardLayout';
+import { TeachersTab } from './dashboard/TeachersTab';
 import { useDashboardData } from './dashboard/useDashboardData';
 import {
   hasSupabaseConfig,
@@ -216,80 +219,25 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
-      <aside className={`bg-[#0F172A] text-white transition-all duration-300 flex flex-col ${isSidebarOpen ? 'w-64' : 'w-20'}`}>
-        <div className="p-6 flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md shadow-blue-600/20">
-            <Layers className="w-5 h-5 text-white" />
-          </div>
-          {isSidebarOpen && <span className="font-bold text-lg tracking-tight whitespace-nowrap">{profile.schoolName}</span>}
-        </div>
-
-        <nav className="flex-1 px-3 py-4 space-y-1">
-          {[
-            { id: 'dashboard', icon: <LayoutDashboard className="w-5 h-5" />, label: 'Бақылау панелі' },
-            { id: 'ranking', icon: <BarChart3 className="w-5 h-5" />, label: 'Рейтинг' },
-            { id: 'teachers', icon: <Users className="w-5 h-5" />, label: 'Мұғалімдер' },
-            { id: 'events', icon: <Calendar className="w-5 h-5" />, label: 'Оқиғалар' },
-            { id: 'analytics', icon: <BarChart3 className="w-5 h-5" />, label: 'Аналитика' },
-            { id: 'settings', icon: <Settings className="w-5 h-5" />, label: 'Баптаулар' },
-          ].map((item) => (
-            <button 
-              key={item.id}
-              onClick={() => {
-                setActiveTab(item.id as any);
-                if (item.id === 'teachers') setSelectedTeacherId(null);
-              }}
-              className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${activeTab === item.id ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-            >
-              <span className="flex-shrink-0">{item.icon}</span>
-              {isSidebarOpen && <span className="font-medium">{item.label}</span>}
-            </button>
-          ))}
-        </nav>
-
-        <div className="p-4 border-t border-white/5">
-          <button 
-            onClick={onLogout}
-            className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
-          >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
-            {isSidebarOpen && <span className="font-medium">Шығу</span>}
-          </button>
-        </div>
-      </aside>
+      <DashboardSidebar
+        activeTab={activeTab}
+        isSidebarOpen={isSidebarOpen}
+        onLogout={onLogout}
+        onSelectTab={(tab) => {
+          setActiveTab(tab);
+          if (tab === 'teachers') setSelectedTeacherId(null);
+        }}
+        profile={profile}
+      />
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col h-screen overflow-hidden">
-        {/* Header */}
-        <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between flex-shrink-0">
-          <div className="flex items-center gap-4">
-            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-              <Menu className="w-5 h-5 text-slate-500" />
-            </button>
-            <h1 className="text-xl font-bold text-slate-800">
-              {selectedTeacher ? `Мұғалімді шолу: ${selectedTeacher.name}` : 'Мектепті шолу'}
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-6">
-
-
-            <div className="flex items-center gap-3 pl-6 border-l border-slate-200">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-slate-800">{profile.name}</p>
-                <p className="text-xs text-slate-500">{profile.position}</p>
-              </div>
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center border-2 border-blue-500 overflow-hidden">
-                {profile.avatar ? (
-                  <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <Users className="w-5 h-5 text-blue-600" />
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
+        <DashboardTopBar
+          isSidebarOpen={isSidebarOpen}
+          onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          profile={profile}
+          selectedTeacherName={selectedTeacher?.name || null}
+        />
 
         {/* Scrollable Area */}
         <div className="flex-1 overflow-y-auto p-8 space-y-8">
@@ -814,313 +762,35 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
           )}
 
           {activeTab === 'teachers' && (
-            <div className="space-y-8">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-800">Мұғалімдер тізімі</h2>
-                <button 
-                  onClick={() => setIsAddModalOpen(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-500 transition-all"
-                >
-                  + Мұғалім қосу
-                </button>
-              </div>
-
-              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-slate-100 flex items-center gap-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input 
-                      type="text" 
-                      placeholder="АЖТ немесе пән бойынша іздеу..." 
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full bg-slate-50 border-none rounded-xl py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-blue-500 transition-all"
-                    />
-                  </div>
-                  <select 
-                    value={subjectFilter}
-                    onChange={(e) => setSubjectFilter(e.target.value)}
-                    className="bg-slate-50 border-none rounded-xl px-4 py-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none"
-                  >
-                    <option>Барлық пәндер</option>
-                    <option>Математика</option>
-                    <option>Физика</option>
-                    <option>Тарих</option>
-                    <option>Ағылшын тілі</option>
-                    <option>Биология</option>
-                    <option>Химия</option>
-                    <option>География</option>
-                    <option>Информатика</option>
-                    <option>Көркем еңбек</option>
-                    <option>Домбыра</option>
-                    <option>Денешынықтыру</option>
-                    <option>Дүниежүзі тарихы</option>
-                    <option>НВП</option>
-                    <option>Қазақ тілі</option>
-                    <option>Орыс тілі</option>
-                    <option>Түрік тілі</option>
-                  </select>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
-                      <tr>
-                        <th 
-                          className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
-                          onClick={() => setTeacherSort({ 
-                            key: 'name', 
-                            direction: teacherSort.key === 'name' && teacherSort.direction === 'asc' ? 'desc' : 'asc' 
-                          })}
-                        >
-                          <div className="flex items-center gap-2">
-                            Мұғалім
-                            {teacherSort.key === 'name' ? (
-                              teacherSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
-                            ) : <ArrowUpDown className="w-3 h-3 opacity-30" />}
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
-                          onClick={() => setTeacherSort({ 
-                            key: 'subject', 
-                            direction: teacherSort.key === 'subject' && teacherSort.direction === 'asc' ? 'desc' : 'asc' 
-                          })}
-                        >
-                          <div className="flex items-center gap-2">
-                            Пән
-                            {teacherSort.key === 'subject' ? (
-                              teacherSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
-                            ) : <ArrowUpDown className="w-3 h-3 opacity-30" />}
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-4 text-center cursor-pointer hover:bg-slate-100 transition-colors"
-                          onClick={() => setTeacherSort({ 
-                            key: 'score', 
-                            direction: teacherSort.key === 'score' && teacherSort.direction === 'desc' ? 'asc' : 'desc' 
-                          })}
-                        >
-                          <div className="flex items-center justify-center gap-2">
-                            Score
-                            {teacherSort.key === 'score' ? (
-                              teacherSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
-                            ) : <ArrowUpDown className="w-3 h-3 opacity-30" />}
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-4 text-center cursor-pointer hover:bg-slate-100 transition-colors"
-                          onClick={() => setTeacherSort({ 
-                            key: 'rank', 
-                            direction: teacherSort.key === 'rank' && teacherSort.direction === 'asc' ? 'desc' : 'asc' 
-                          })}
-                        >
-                          <div className="flex items-center justify-center gap-2">
-                            Орны
-                            {teacherSort.key === 'rank' ? (
-                              teacherSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
-                            ) : <ArrowUpDown className="w-3 h-3 opacity-30" />}
-                          </div>
-                        </th>
-                        <th className="px-6 py-4"></th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {derivedTeachers
-                        .filter(t => {
-                          const matchesSearch = t.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                                              t.subject.toLowerCase().includes(searchTerm.toLowerCase());
-                          const matchesSubject = subjectFilter === 'Барлық пәндер' || t.subject === subjectFilter;
-                          return matchesSearch && matchesSubject;
-                        })
-                        .sort((a, b) => {
-                          const valA = a[teacherSort.key];
-                          const valB = b[teacherSort.key];
-                          if (typeof valA === 'string' && typeof valB === 'string') {
-                            return teacherSort.direction === 'asc' 
-                              ? valA.localeCompare(valB) 
-                              : valB.localeCompare(valA);
-                          }
-                          return teacherSort.direction === 'asc' 
-                            ? (valA as number) - (valB as number) 
-                            : (valB as number) - (valA as number);
-                        })
-                        .map((t) => (
-                        <tr key={t.id} className="hover:bg-slate-50 transition-colors group">
-                          <td className="px-6 py-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold text-sm">
-                                {t.name.split(' ').map(n => n[0]).join('')}
-                              </div>
-                              <div>
-                                <p className="font-bold text-slate-800 text-sm">{t.name}</p>
-                                <p className="text-xs text-slate-400">ID: {t.id}</p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className="text-sm text-slate-600 font-medium">{t.subject}</span>
-                          </td>
-                          <td className="px-6 py-4">
-                            <div className="flex flex-col items-center">
-                              <span className={`text-sm font-bold ${getScoreColor(t.score)}`}>{t.score}%</span>
-                              <div className="w-16 h-1 bg-slate-100 rounded-full mt-1">
-                                <div className={`h-full ${getScoreBg(t.score)}`} style={{ width: `${t.score}%` }}></div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 text-center">
-                            <span className="text-sm font-bold text-slate-700">#{t.rank}</span>
-                          </td>
-                          <td className="px-6 py-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <button 
-                                onClick={() => {
-                                  setSelectedTeacherId(t.id);
-                                  setActiveTab('dashboard');
-                                }}
-                                className="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-bold hover:bg-blue-600 hover:text-white transition-all"
-                              >
-                                Профиль
-                              </button>
-                              <button 
-                                onClick={() => handleDeleteTeacher(t.id)}
-                                className="p-2 bg-slate-100 text-slate-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 transition-all"
-                                title="Өшіру"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+            <TeachersTab
+              derivedTeachers={derivedTeachers}
+              searchTerm={searchTerm}
+              subjectFilter={subjectFilter}
+              teacherSort={teacherSort}
+              setSearchTerm={setSearchTerm}
+              setSubjectFilter={setSubjectFilter}
+              setTeacherSort={setTeacherSort}
+              getScoreBg={getScoreBg}
+              getScoreColor={getScoreColor}
+              onAddTeacher={() => setIsAddModalOpen(true)}
+              onDeleteTeacher={handleDeleteTeacher}
+              onOpenTeacherProfile={(id) => {
+                setSelectedTeacherId(id);
+                setActiveTab('dashboard');
+              }}
+            />
           )}
 
           {activeTab === 'events' && (
-            <div className="space-y-8">
-              <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-800">Барлық оқиғалар</h2>
-                <div className="flex gap-3">
-                  <select 
-                    value={eventTypeFilter}
-                    onChange={(e) => setEventTypeFilter(e.target.value)}
-                    className="bg-white border border-slate-200 px-4 py-2 rounded-xl font-bold text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-                  >
-                    <option>Барлық түрлері</option>
-                    <option value="Сабаққа келмеу">Сабаққа келмеу</option>
-                    <option value="Сабаққа кешігу">Сабаққа кешігу</option>
-                    <option value="БТС емтиханы күні келмеуі">БТС емтиханы күні келмеуі</option>
-                    <option value="Кеш ескерту">Кеш ескерту</option>
-                    <option value="Ескертпей сабаққа келмеуі">Ескертпей сабаққа келмеуі</option>
-                    <option value="Ауырып қалуы">Ауырып қалуы</option>
-                    <option value="Семинар / командировкаға кетуі">Семинар / командировкаға кетуі</option>
-                  </select>
-                  <button 
-                    onClick={() => setIsAddEventModalOpen(true)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-500 transition-all"
-                  >
-                    + Жаңа оқиға
-                  </button>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
-                      <tr>
-                        <th 
-                          className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
-                          onClick={() => setEventSort({ 
-                            key: 'teacherName', 
-                            direction: eventSort.key === 'teacherName' && eventSort.direction === 'asc' ? 'desc' : 'asc' 
-                          })}
-                        >
-                          <div className="flex items-center gap-2">
-                            Мұғалім
-                            {eventSort.key === 'teacherName' ? (
-                              eventSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
-                            ) : <ArrowUpDown className="w-3 h-3 opacity-30" />}
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
-                          onClick={() => setEventSort({ 
-                            key: 'type', 
-                            direction: eventSort.key === 'type' && eventSort.direction === 'asc' ? 'desc' : 'asc' 
-                          })}
-                        >
-                          <div className="flex items-center gap-2">
-                            Түрі
-                            {eventSort.key === 'type' ? (
-                              eventSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
-                            ) : <ArrowUpDown className="w-3 h-3 opacity-30" />}
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
-                          onClick={() => setEventSort({ 
-                            key: 'date', 
-                            direction: eventSort.key === 'date' && eventSort.direction === 'desc' ? 'asc' : 'desc' 
-                          })}
-                        >
-                          <div className="flex items-center gap-2">
-                            Күні
-                            {eventSort.key === 'date' ? (
-                              eventSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
-                            ) : <ArrowUpDown className="w-3 h-3 opacity-30" />}
-                          </div>
-                        </th>
-                        <th className="px-6 py-4"></th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {eventsWithTeacherNames
-                        .filter(e => eventTypeFilter === 'Барлық түрлері' || e.type === eventTypeFilter)
-                        .sort((a, b) => {
-                          const valA = a[eventSort.key];
-                          const valB = b[eventSort.key];
-                          if (typeof valA === 'string' && typeof valB === 'string') {
-                            return eventSort.direction === 'asc' 
-                              ? valA.localeCompare(valB) 
-                              : valB.localeCompare(valA);
-                          }
-                          return eventSort.direction === 'asc' 
-                            ? (valA as number) - (valB as number) 
-                            : (valB as number) - (valA as number);
-                        })
-                        .map((event) => (
-                        <tr key={event.id} className="hover:bg-slate-50 transition-colors">
-                          <td className="px-6 py-4">
-                            <p className="font-bold text-slate-800 text-sm">{event.teacherName}</p>
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`text-sm font-medium ${
-                              event.type === 'Сабаққа кешігу' ? 'text-amber-600' : 
-                              event.type === 'Ескертпей сабаққа келмеуі' ? 'text-red-600' : 'text-blue-600'
-                            }`}>{event.type}</span>
-                          </td>
-                          <td className="px-6 py-4 text-sm text-slate-500">{event.date.split('-').reverse().join('.')}</td>
-                          <td className="px-6 py-4 text-right">
-                            <button 
-                              onClick={() => handleDeleteEvent(event.id)}
-                              className="p-2 bg-slate-100 text-slate-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 transition-all"
-                              title="Өшіру"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+            <EventsTab
+              eventSort={eventSort}
+              eventTypeFilter={eventTypeFilter}
+              eventsWithTeacherNames={eventsWithTeacherNames}
+              setEventSort={setEventSort}
+              setEventTypeFilter={setEventTypeFilter}
+              onAddEvent={() => setIsAddEventModalOpen(true)}
+              onDeleteEvent={handleDeleteEvent}
+            />
           )}
 
           {activeTab === 'analytics' && (
