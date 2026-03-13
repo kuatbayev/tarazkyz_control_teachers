@@ -6,9 +6,10 @@
 import React, { Suspense, lazy, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import {
+  clearStoredLocalAuthSession,
+  getStoredLocalAuthSession,
   hasSupabaseConfig,
   isLocalAuthBypassEnabled,
-  localAuthStorageKey,
   supabase,
 } from './lib/supabase';
 import type { Page } from './types';
@@ -33,7 +34,7 @@ function AppShellLoader() {
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>(() => {
-    if (isLocalAuthBypassEnabled && localStorage.getItem(localAuthStorageKey) === 'true') {
+    if (isLocalAuthBypassEnabled && getStoredLocalAuthSession()) {
       return 'dashboard';
     }
 
@@ -71,7 +72,7 @@ export default function App() {
 
   const handleLogout = async () => {
     if (isLocalAuthBypassEnabled) {
-      localStorage.removeItem(localAuthStorageKey);
+      clearStoredLocalAuthSession();
     }
 
     if (hasSupabaseConfig) {

@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import { AlertCircle, BarChart3, Clock, Layers, Settings, UserMinus, Users } from 'lucide-react';
 import { motion } from 'motion/react';
 import {
+  getRememberMePreference,
   hasSupabaseConfig,
   isLocalAuthBypassEnabled,
-  localAuthStorageKey,
+  setRememberMePreference,
+  setStoredLocalAuthSession,
   supabase,
 } from '../lib/supabase';
 
 export function LandingPage({ onLogin }: { onLogin: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(() => getRememberMePreference());
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,10 +21,11 @@ export function LandingPage({ onLogin }: { onLogin: () => void }) {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setRememberMePreference(rememberMe);
 
     if (!hasSupabaseConfig) {
       if (isLocalAuthBypassEnabled) {
-        localStorage.setItem(localAuthStorageKey, 'true');
+        setStoredLocalAuthSession(rememberMe);
         onLogin();
         setLoading(false);
         return;
@@ -81,7 +85,8 @@ export function LandingPage({ onLogin }: { onLogin: () => void }) {
             </h1>
             <p className="mb-10 text-xl leading-relaxed text-slate-400">
               Оқу үдерісіндегі маңызды тәртіп көрсеткіштерін бақылап, кешігу, келмеу, ескерту, ауысым және басқа да
-              оқиғаларды есепке алыңыз. Мұғалімдердің көрсеткішін бір жерден қарап, талдауға ыңғайлы панельді пайдаланыңыз.
+              оқиғаларды есепке алыңыз. Мұғалімдердің көрсеткішін бір жерден қарап, талдауға ыңғайлы панельді
+              пайдаланыңыз.
             </p>
 
             <div className="mb-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -147,7 +152,12 @@ export function LandingPage({ onLogin }: { onLogin: () => void }) {
               </div>
               <div className="flex items-center justify-between text-sm">
                 <label className="flex cursor-pointer items-center gap-2">
-                  <input type="checkbox" className="rounded border-white/10 bg-white/5 text-blue-600 focus:ring-blue-500" />
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="rounded border-white/10 bg-white/5 text-blue-600 focus:ring-blue-500"
+                  />
                   <span className="text-slate-400">Мені есте сақта</span>
                 </label>
                 <a href="#" className="text-blue-400 transition-colors hover:text-blue-300">
