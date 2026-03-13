@@ -43,12 +43,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   const [eventTypeFilter, setEventTypeFilter] = useState(ALL_EVENT_TYPES_LABEL);
   const [teacherSort, setTeacherSort] = useState<{ key: keyof Teacher; direction: 'asc' | 'desc' }>({ key: 'rank', direction: 'asc' });
   const [eventSort, setEventSort] = useState<{ key: keyof Event; direction: 'asc' | 'desc' }>({ key: 'date', direction: 'desc' });
-  const [notificationSettings, setNotificationSettings] = useState([
-    { id: 'events', label: 'Жаңа оқиғалар туралы хабарлау', checked: true },
-    { id: 'ratings', label: 'Рейтинг өзгерістері', checked: true },
-    { id: 'reports', label: 'Апталық есептер', checked: false },
-    { id: 'updates', label: 'Жүйелік жаңартулар', checked: true },
-  ]);
   const [showSaveToast, setShowSaveToast] = useState(false);
   const [showCongratulateToast, setShowCongratulateToast] = useState(false);
 
@@ -141,10 +135,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
         message: error.message || 'Құпия сөзді өзгерту кезінде қате шықты.',
       };
     }
-  };
-
-  const toggleNotification = (id: string) => {
-    setNotificationSettings((prev) => prev.map((item) => (item.id === id ? { ...item, checked: !item.checked } : item)));
   };
 
   const { pieData, eventsWithTeacherNames, derivedTeachers, dynamicLineData, barData, schoolKPIs } = buildDashboardAnalytics(teachersList, eventsList);
@@ -480,10 +470,8 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
             <SettingsTab
               handleChangePassword={handleChangePassword}
               handleSaveSettings={handleSaveSettings}
-              notificationSettings={notificationSettings}
               profile={profile}
               setProfile={setProfile}
-              toggleNotification={toggleNotification}
             />
           )}
         </div>

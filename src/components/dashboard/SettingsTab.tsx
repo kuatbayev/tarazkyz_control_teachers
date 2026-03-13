@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
-import { Bell, ChevronRight, Settings, Users, X } from 'lucide-react';
+import { ChevronRight, Settings, Users, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import type { Profile } from '../../types';
-
-type NotificationSetting = {
-  id: string;
-  label: string;
-  checked: boolean;
-};
 
 type PasswordChangeResult = {
   success: boolean;
@@ -17,19 +11,15 @@ type PasswordChangeResult = {
 type SettingsTabProps = {
   handleChangePassword: (password: string) => Promise<PasswordChangeResult>;
   handleSaveSettings: () => void;
-  notificationSettings: NotificationSetting[];
   profile: Profile;
   setProfile: React.Dispatch<React.SetStateAction<Profile>>;
-  toggleNotification: (id: string) => void;
 };
 
 export function SettingsTab({
   handleChangePassword,
   handleSaveSettings,
-  notificationSettings,
   profile,
   setProfile,
-  toggleNotification,
 }: SettingsTabProps) {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -270,41 +260,22 @@ export function SettingsTab({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
-            <Bell className="h-5 w-5 text-blue-500" />
-            Хабарландырулар
-          </h3>
-          <div className="space-y-4">
-            {notificationSettings.map((item) => (
-              <label key={item.id} className="group flex cursor-pointer items-center justify-between">
-                <span className="text-sm text-slate-600 transition-colors group-hover:text-slate-900">{item.label}</span>
-                <div onClick={() => toggleNotification(item.id)} className={`relative h-6 w-12 rounded-full transition-all ${item.checked ? 'bg-blue-600' : 'bg-slate-200'}`}>
-                  <div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${item.checked ? 'left-7' : 'left-1'}`}></div>
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
-            <Settings className="h-5 w-5 text-blue-500" />
-            Қауіпсіздік
-          </h3>
-          <div className="space-y-4">
-            <button
-              onClick={() => setIsPasswordModalOpen(true)}
-              className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-all hover:bg-slate-50"
-            >
-              Құпия сөзді өзгерту
-              <ChevronRight className="h-4 w-4 text-slate-400" />
-            </button>
-            <button className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-rose-600 transition-all hover:bg-rose-50">
-              Сессияларды аяқтау
-            </button>
-          </div>
+      <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+        <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
+          <Settings className="h-5 w-5 text-blue-500" />
+          Қауіпсіздік
+        </h3>
+        <div className="space-y-4">
+          <button
+            onClick={() => setIsPasswordModalOpen(true)}
+            className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-all hover:bg-slate-50"
+          >
+            Құпия сөзді өзгерту
+            <ChevronRight className="h-4 w-4 text-slate-400" />
+          </button>
+          <button className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-rose-600 transition-all hover:bg-rose-50">
+            Сессияларды аяқтау
+          </button>
         </div>
       </div>
     </div>
