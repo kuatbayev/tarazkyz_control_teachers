@@ -177,15 +177,6 @@ export function SettingsTab({
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-bold text-slate-700">Email</label>
-                <input
-                  type="email"
-                  value={profile.email}
-                  onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
                 <label className="mb-2 block text-sm font-bold text-slate-700">Р›Р°СѓР°Р·С‹РјС‹</label>
                 <input
                   type="text"
@@ -256,6 +247,15 @@ export function SettingsTab({
           <Settings className="h-5 w-5 text-blue-500" />
           ТљР°СѓС–РїСЃС–Р·РґС–Рє
         </h3>
+        <div className="mb-4">
+          <label className="mb-2 block text-sm font-bold text-slate-700">Email</label>
+          <input
+            type="email"
+            value={profile.email}
+            onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
         <button
           onClick={() => setIsPasswordModalOpen(true)}
           className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-all hover:bg-slate-50"
