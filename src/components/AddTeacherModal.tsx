@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { DEFAULT_SUBJECT, SUBJECT_OPTIONS } from '../data/options';
 import type { Teacher } from '../types';
 
 type AddTeacherModalProps = {
@@ -11,14 +12,14 @@ type AddTeacherModalProps = {
 
 export function AddTeacherModal({ isOpen, onClose, onAdd }: AddTeacherModalProps) {
   const [name, setName] = useState('');
-  const [subject, setSubject] = useState('РњР°С‚РµРјР°С‚РёРєР°');
+  const [subject, setSubject] = useState(DEFAULT_SUBJECT);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
     onAdd({ name, subject });
     setName('');
-    setSubject('РњР°С‚РµРјР°С‚РёРєР°');
+    setSubject(DEFAULT_SUBJECT);
   };
 
   return (
@@ -36,64 +37,53 @@ export function AddTeacherModal({ isOpen, onClose, onAdd }: AddTeacherModalProps
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="relative bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden"
+            className="relative w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl"
           >
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="text-xl font-bold text-slate-800">Р–Р°ТЈР° РјТ±Т“Р°Р»С–Рј Т›РѕСЃСѓ</h3>
-              <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                <X className="w-5 h-5 text-slate-400" />
+            <div className="flex items-center justify-between border-b border-slate-100 p-6">
+              <h3 className="text-xl font-bold text-slate-800">Жаңа мұғалім қосу</h3>
+              <button onClick={onClose} className="rounded-full p-2 transition-colors hover:bg-slate-100">
+                <X className="h-5 w-5 text-slate-400" />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6 p-6">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">РњТ±Т“Р°Р»С–РјРЅС–ТЈ РђР–Рў</label>
+                <label className="mb-2 block text-sm font-bold text-slate-700">Мұғалімнің аты-жөні</label>
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="РњС‹СЃР°Р»С‹: РђСЃС…Р°С‚ РђСЃС…Р°С‚Т±Р»С‹"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  placeholder="Мысалы: Аслан Әбілұлы"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">РџУ™РЅ</label>
+                <label className="mb-2 block text-sm font-bold text-slate-700">Пәні</label>
                 <select
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
                 >
-                  <option>РњР°С‚РµРјР°С‚РёРєР°</option>
-                  <option>Р¤РёР·РёРєР°</option>
-                  <option>РўР°СЂРёС…</option>
-                  <option>РђТ“С‹Р»С€С‹РЅ С‚С–Р»С–</option>
-                  <option>Р‘РёРѕР»РѕРіРёСЏ</option>
-                  <option>РҐРёРјРёСЏ</option>
-                  <option>Р“РµРѕРіСЂР°С„РёСЏ</option>
-                  <option>РРЅС„РѕСЂРјР°С‚РёРєР°</option>
-                  <option>РљУ©СЂРєРµРј РµТЈР±РµРє</option>
-                  <option>Р”РѕРјР±С‹СЂР°</option>
-                  <option>Р”РµРЅРµС€С‹РЅС‹Т›С‚С‹СЂСѓ</option>
-                  <option>Р”ТЇРЅРёРµР¶ТЇР·С– С‚Р°СЂРёС…С‹</option>
-                  <option>РќР’Рџ</option>
-                  <option>ТљР°Р·Р°Т› С‚С–Р»С–</option>
-                  <option>РћСЂС‹СЃ С‚С–Р»С–</option>
-                  <option>РўТЇСЂС–Рє С‚С–Р»С–</option>
+                  {SUBJECT_OPTIONS.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
                 </select>
               </div>
-              <div className="pt-4 flex gap-3">
+              <div className="flex gap-3 pt-4">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-3 rounded-xl font-bold text-sm text-slate-500 bg-slate-100 hover:bg-slate-200 transition-all"
+                  className="flex-1 rounded-xl bg-slate-100 py-3 text-sm font-bold text-slate-500 transition-all hover:bg-slate-200"
                 >
-                  Р‘РѕР»РґС‹СЂРјР°Сѓ
+                  Болдырмау
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 rounded-xl font-bold text-sm text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition-all"
+                  className="flex-1 rounded-xl bg-blue-600 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-500"
                 >
-                  ТљРѕСЃСѓ
+                  Қосу
                 </button>
               </div>
             </form>

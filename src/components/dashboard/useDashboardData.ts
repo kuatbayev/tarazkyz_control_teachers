@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
+import { DEFAULT_EVENT_TYPE } from '../../data/options';
 import { initialEvents, localMockEvents, localMockProfile, localMockTeachers, teachers } from '../../data/mockData';
 import { hasSupabaseConfig, isLocalAuthBypassEnabled, supabase } from '../../lib/supabase';
 import type { Event, Profile, Teacher } from '../../types';
 
 const defaultProfile: Profile = {
-  name: 'РђСЃС…Р°С‚ Р‘.',
+  name: 'Асхат Б.',
   email: 'admin@bil.edu.kz',
   phone: '+7 (707) 123-45-67',
   schoolName: 'Turkistan girls BIL',
-  academicYear: '2025-2026 РћТ›Сѓ Р¶С‹Р»С‹',
-  currentTerm: '3 РўРѕТ›СЃР°РЅ',
-  position: 'РњРµРєС‚РµРї РґРёСЂРµРєС‚РѕСЂС‹',
+  academicYear: '2025-2026 оқу жылы',
+  currentTerm: '3 тоқсан',
+  position: 'Мектеп директоры',
   avatar: null,
 };
 
@@ -85,7 +86,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
             schoolName: profileRes.data.school_name,
             academicYear: profileRes.data.academic_year,
             currentTerm: profileRes.data.current_term,
-            position: 'РњРµРєС‚РµРї РґРёСЂРµРєС‚РѕСЂС‹',
+            position: 'Мектеп директоры',
             avatar: profileRes.data.avatar_url,
           });
         }
@@ -121,8 +122,8 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
     }
 
     const teacherData = {
-      name: newTeacher.name || 'Р–Р°ТЈР° РјТ±Т“Р°Р»С–Рј',
-      subject: newTeacher.subject || 'РџУ™РЅ',
+      name: newTeacher.name || 'Жаңа мұғалім',
+      subject: newTeacher.subject || 'Пән',
       has_documents: true,
     };
 
@@ -154,7 +155,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       return true;
     } catch (error: any) {
       console.error('Error adding teacher:', error);
-      alert('РњТ±Т“Р°Р»С–РјРґС– Т›РѕСЃСѓ РєРµР·С–РЅРґРµ Т›Р°С‚Рµ С€С‹Т›С‚С‹: ' + error.message);
+      alert(`Мұғалімді қосу кезінде қате шықты: ${error.message}`);
       return false;
     }
   };
@@ -183,7 +184,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       }
     } catch (error: any) {
       console.error('Error deleting teacher:', error);
-      alert('РњТ±Т“Р°Р»С–РјРґС– У©С€С–СЂСѓ РєРµР·С–РЅРґРµ Т›Р°С‚Рµ С€С‹Т›С‚С‹: ' + error.message);
+      alert(`Мұғалімді өшіру кезінде қате шықты: ${error.message}`);
     }
   };
 
@@ -203,7 +204,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       setEventsList(eventsList.filter((event) => event.id !== id));
     } catch (error: any) {
       console.error('Error deleting event:', error);
-      alert('РћТ›РёТ“Р°РЅС‹ У©С€С–СЂСѓ РєРµР·С–РЅРґРµ Т›Р°С‚Рµ С€С‹Т›С‚С‹: ' + error.message);
+      alert(`Оқиғаны өшіру кезінде қате шықты: ${error.message}`);
     }
   };
 
@@ -214,7 +215,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
         id: `local-event-${Date.now()}`,
         teacherId: newEvent.teacherId || '',
         teacherName: teacher?.name || 'Unknown teacher',
-        type: newEvent.type || 'РЎР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓ',
+        type: newEvent.type || DEFAULT_EVENT_TYPE,
         date: newEvent.date || new Date().toISOString().split('T')[0],
         reason: newEvent.reason || '',
       };
@@ -225,7 +226,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
 
     const eventData = {
       teacher_id: newEvent.teacherId || '',
-      type: newEvent.type || 'РЎР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓ',
+      type: newEvent.type || DEFAULT_EVENT_TYPE,
       date: newEvent.date || new Date().toISOString().split('T')[0],
       reason: newEvent.reason || '',
     };
@@ -241,7 +242,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
           {
             id: event.id,
             teacherId: event.teacher_id,
-            teacherName: teacher?.name || newEvent.teacherName || 'Р‘РµР»РіС–СЃС–Р·',
+            teacherName: teacher?.name || newEvent.teacherName || 'Белгісіз',
             type: event.type,
             date: event.date,
             reason: event.reason || '',
@@ -253,7 +254,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       return true;
     } catch (error: any) {
       console.error('Error adding event:', error);
-      alert('РћТ›РёТ“Р°РЅС‹ Т›РѕСЃСѓ РєРµР·С–РЅРґРµ Т›Р°С‚Рµ С€С‹Т›С‚С‹: ' + error.message);
+      alert(`Оқиғаны қосу кезінде қате шықты: ${error.message}`);
       return false;
     }
   };

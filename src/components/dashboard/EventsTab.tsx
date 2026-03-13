@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowDown, ArrowUp, ArrowUpDown, Trash2 } from 'lucide-react';
+import { ALL_EVENT_TYPES_LABEL, EVENT_TYPES } from '../../data/options';
 import type { Event } from '../../types';
 
 type EventSort = { key: keyof Event; direction: 'asc' | 'desc' };
@@ -26,38 +27,33 @@ export function EventsTab({
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-slate-800">Р‘Р°СЂР»С‹Т› РѕТ›РёТ“Р°Р»Р°СЂ</h2>
+        <h2 className="text-2xl font-bold text-slate-800">Барлық оқиғалар</h2>
         <div className="flex gap-3">
           <select
             value={eventTypeFilter}
             onChange={(e) => setEventTypeFilter(e.target.value)}
-            className="bg-white border border-slate-200 px-4 py-2 rounded-xl font-bold text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold outline-none transition-all focus:ring-2 focus:ring-blue-500"
           >
-            <option>Р‘Р°СЂР»С‹Т› С‚ТЇСЂР»РµСЂС–</option>
-            <option value="РЎР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓ">РЎР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓ</option>
-            <option value="РЎР°Р±Р°Т›Т›Р° РєРµС€С–РіСѓ">РЎР°Р±Р°Т›Т›Р° РєРµС€С–РіСѓ</option>
-            <option value="Р‘РўРЎ РµРјС‚РёС…Р°РЅС‹ РєТЇРЅС– РєРµР»РјРµСѓС–">Р‘РўРЎ РµРјС‚РёС…Р°РЅС‹ РєТЇРЅС– РєРµР»РјРµСѓС–</option>
-            <option value="РљРµС€ РµСЃРєРµСЂС‚Сѓ">РљРµС€ РµСЃРєРµСЂС‚Сѓ</option>
-            <option value="Р•СЃРєРµСЂС‚РїРµР№ СЃР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓС–">Р•СЃРєРµСЂС‚РїРµР№ СЃР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓС–</option>
-            <option value="РђСѓС‹СЂС‹Рї Т›Р°Р»СѓС‹">РђСѓС‹СЂС‹Рї Т›Р°Р»СѓС‹</option>
-            <option value="РЎРµРјРёРЅР°СЂ / РєРѕРјР°РЅРґРёСЂРѕРІРєР°Т“Р° РєРµС‚СѓС–">РЎРµРјРёРЅР°СЂ / РєРѕРјР°РЅРґРёСЂРѕРІРєР°Т“Р° РєРµС‚СѓС–</option>
+            <option value={ALL_EVENT_TYPES_LABEL}>{ALL_EVENT_TYPES_LABEL}</option>
+            {EVENT_TYPES.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
           </select>
-          <button
-            onClick={onAddEvent}
-            className="bg-blue-600 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-500 transition-all"
-          >
-            + Р–Р°ТЈР° РѕТ›РёТ“Р°
+          <button onClick={onAddEvent} className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-500">
+            + Жаңа оқиға
           </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider font-bold">
+            <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500">
               <tr>
                 <th
-                  className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
+                  className="cursor-pointer px-6 py-4 transition-colors hover:bg-slate-100"
                   onClick={() =>
                     setEventSort({
                       key: 'teacherName',
@@ -66,16 +62,16 @@ export function EventsTab({
                   }
                 >
                   <div className="flex items-center gap-2">
-                    РњТ±Т“Р°Р»С–Рј
+                    Мұғалім
                     {eventSort.key === 'teacherName' ? (
-                      eventSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                      eventSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
                     ) : (
-                      <ArrowUpDown className="w-3 h-3 opacity-30" />
+                      <ArrowUpDown className="h-3 w-3 opacity-30" />
                     )}
                   </div>
                 </th>
                 <th
-                  className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
+                  className="cursor-pointer px-6 py-4 transition-colors hover:bg-slate-100"
                   onClick={() =>
                     setEventSort({
                       key: 'type',
@@ -84,16 +80,16 @@ export function EventsTab({
                   }
                 >
                   <div className="flex items-center gap-2">
-                    РўТЇСЂС–
+                    Түрі
                     {eventSort.key === 'type' ? (
-                      eventSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                      eventSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
                     ) : (
-                      <ArrowUpDown className="w-3 h-3 opacity-30" />
+                      <ArrowUpDown className="h-3 w-3 opacity-30" />
                     )}
                   </div>
                 </th>
                 <th
-                  className="px-6 py-4 cursor-pointer hover:bg-slate-100 transition-colors"
+                  className="cursor-pointer px-6 py-4 transition-colors hover:bg-slate-100"
                   onClick={() =>
                     setEventSort({
                       key: 'date',
@@ -102,11 +98,11 @@ export function EventsTab({
                   }
                 >
                   <div className="flex items-center gap-2">
-                    РљТЇРЅС–
+                    Күні
                     {eventSort.key === 'date' ? (
-                      eventSort.direction === 'asc' ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />
+                      eventSort.direction === 'asc' ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />
                     ) : (
-                      <ArrowUpDown className="w-3 h-3 opacity-30" />
+                      <ArrowUpDown className="h-3 w-3 opacity-30" />
                     )}
                   </div>
                 </th>
@@ -115,7 +111,7 @@ export function EventsTab({
             </thead>
             <tbody className="divide-y divide-slate-100">
               {eventsWithTeacherNames
-                .filter((event) => eventTypeFilter === 'Р‘Р°СЂР»С‹Т› С‚ТЇСЂР»РµСЂС–' || event.type === eventTypeFilter)
+                .filter((event) => eventTypeFilter === ALL_EVENT_TYPES_LABEL || event.type === eventTypeFilter)
                 .sort((a, b) => {
                   const valA = a[eventSort.key];
                   const valB = b[eventSort.key];
@@ -127,16 +123,16 @@ export function EventsTab({
                   return eventSort.direction === 'asc' ? numericA - numericB : numericB - numericA;
                 })
                 .map((event) => (
-                  <tr key={event.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={event.id} className="transition-colors hover:bg-slate-50">
                     <td className="px-6 py-4">
-                      <p className="font-bold text-slate-800 text-sm">{event.teacherName}</p>
+                      <p className="text-sm font-bold text-slate-800">{event.teacherName}</p>
                     </td>
                     <td className="px-6 py-4">
                       <span
                         className={`text-sm font-medium ${
-                          event.type === 'РЎР°Р±Р°Т›Т›Р° РєРµС€С–РіСѓ'
+                          event.type === 'Сабаққа кешігу'
                             ? 'text-amber-600'
-                            : event.type === 'Р•СЃРєРµСЂС‚РїРµР№ СЃР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓС–'
+                            : event.type === 'Ескертпей сабаққа келмеуі'
                               ? 'text-red-600'
                               : 'text-blue-600'
                         }`}
@@ -148,10 +144,10 @@ export function EventsTab({
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => onDeleteEvent(event.id)}
-                        className="p-2 bg-slate-100 text-slate-400 rounded-xl hover:bg-rose-50 hover:text-rose-600 transition-all"
-                        title="УЁС€С–СЂСѓ"
+                        className="rounded-xl bg-slate-100 p-2 text-slate-400 transition-all hover:bg-rose-50 hover:text-rose-600"
+                        title="Өшіру"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </td>
                   </tr>

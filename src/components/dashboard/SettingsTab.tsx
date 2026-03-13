@@ -24,19 +24,19 @@ export function SettingsTab({
   toggleNotification,
 }: SettingsTabProps) {
   return (
-    <div className="space-y-8 max-w-4xl relative">
-      <h2 className="text-2xl font-bold text-slate-800">Р‘Р°РїС‚Р°СѓР»Р°СЂ</h2>
+    <div className="relative max-w-4xl space-y-8">
+      <h2 className="text-2xl font-bold text-slate-800">Баптаулар</h2>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-8 border-b border-slate-100">
-          <h3 className="text-lg font-bold text-slate-800 mb-6">РџСЂРѕС„РёР»СЊ Р±Р°РїС‚Р°СѓР»Р°СЂС‹</h3>
-          <div className="flex flex-col md:flex-row gap-8">
+      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 p-8">
+          <h3 className="mb-6 text-lg font-bold text-slate-800">Профиль баптаулары</h3>
+          <div className="flex flex-col gap-8 md:flex-row">
             <div className="flex flex-col items-center gap-4">
-              <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center border-4 border-blue-50 overflow-hidden">
+              <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 border-blue-50 bg-blue-100">
                 {profile.avatar ? (
-                  <img src={profile.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                  <img src={profile.avatar} alt="Avatar" className="h-full w-full object-cover" />
                 ) : (
-                  <Users className="w-10 h-10 text-blue-600" />
+                  <Users className="h-10 w-10 text-blue-600" />
                 )}
               </div>
               <input
@@ -55,138 +55,139 @@ export function SettingsTab({
                   }
                 }}
               />
-              <label htmlFor="avatar-upload" className="text-sm font-bold text-blue-600 hover:underline cursor-pointer">
-                РЎСѓСЂРµС‚С‚С– У©Р·РіРµСЂС‚Сѓ
+              <label htmlFor="avatar-upload" className="cursor-pointer text-sm font-bold text-blue-600 hover:underline">
+                Суретті өзгерту
               </label>
             </div>
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+            <div className="grid flex-1 grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">РђС‚С‹-Р¶У©РЅС–</label>
+                <label className="mb-2 block text-sm font-bold text-slate-700">Аты-жөні</label>
                 <input
                   type="text"
                   value={profile.name}
                   onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Email</label>
+                <label className="mb-2 block text-sm font-bold text-slate-700">Email</label>
                 <input
                   type="email"
                   value={profile.email}
                   onChange={(e) => setProfile({ ...profile, email: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">Р›Р°СѓР°Р·С‹РјС‹</label>
+                <label className="mb-2 block text-sm font-bold text-slate-700">Лауазымы</label>
                 <input
                   type="text"
                   value={profile.position}
                   onChange={(e) => setProfile({ ...profile, position: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-2">РўРµР»РµС„РѕРЅ</label>
+                <label className="mb-2 block text-sm font-bold text-slate-700">Телефон</label>
                 <input
                   type="text"
                   value={profile.phone}
                   onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
           </div>
         </div>
-        <div className="p-8 bg-slate-50 flex justify-end">
-          <button onClick={handleSaveSettings} className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-500 transition-all">
-            РЎР°Т›С‚Р°Сѓ
+        <div className="flex justify-end bg-slate-50 p-8">
+          <button onClick={handleSaveSettings} className="rounded-xl bg-blue-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-500">
+            Сақтау
           </button>
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="p-8 border-b border-slate-100">
-          <h3 className="text-lg font-bold text-slate-800 mb-6">Р–ТЇР№РµР»С–Рє Р±Р°РїС‚Р°СѓР»Р°СЂ</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 p-8">
+          <h3 className="mb-6 text-lg font-bold text-slate-800">Жүйелік баптаулар</h3>
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">РњРµРєС‚РµРї Р°С‚Р°СѓС‹</label>
+              <label className="mb-2 block text-sm font-bold text-slate-700">Мектеп атауы</label>
               <input
                 type="text"
                 value={profile.schoolName}
                 onChange={(e) => setProfile({ ...profile, schoolName: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">РћТ›Сѓ Р¶С‹Р»С‹</label>
+              <label className="mb-2 block text-sm font-bold text-slate-700">Оқу жылы</label>
               <select
                 value={profile.academicYear}
                 onChange={(e) => setProfile({ ...profile, academicYear: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
               >
-                <option>2025-2026 РћТ›Сѓ Р¶С‹Р»С‹</option>
-                <option>2024-2025 РћТ›Сѓ Р¶С‹Р»С‹</option>
+                <option>2025-2026 оқу жылы</option>
+                <option>2024-2025 оқу жылы</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-bold text-slate-700 mb-2">РђТ“С‹РјРґР°Т“С‹ С‚РѕТ›СЃР°РЅ</label>
+              <label className="mb-2 block text-sm font-bold text-slate-700">Ағымдағы тоқсан</label>
               <select
                 value={profile.currentTerm}
                 onChange={(e) => setProfile({ ...profile, currentTerm: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
               >
-                <option>Р–Р°Р»РїС‹</option>
-                <option>1 РўРѕТ›СЃР°РЅ</option>
-                <option>2 РўРѕТ›СЃР°РЅ</option>
-                <option>3 РўРѕТ›СЃР°РЅ</option>
-                <option>4 РўРѕТ›СЃР°РЅ</option>
+                <option>Жалпы</option>
+                <option>1 тоқсан</option>
+                <option>2 тоқсан</option>
+                <option>3 тоқсан</option>
+                <option>4 тоқсан</option>
               </select>
             </div>
           </div>
         </div>
-        <div className="p-8 bg-slate-50 flex justify-end">
-          <button onClick={handleSaveSettings} className="bg-blue-600 text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 hover:bg-blue-500 transition-all">
-            РЎР°Т›С‚Р°Сѓ
+        <div className="flex justify-end bg-slate-50 p-8">
+          <button onClick={handleSaveSettings} className="rounded-xl bg-blue-600 px-8 py-3 text-sm font-bold text-white shadow-lg shadow-blue-600/20 transition-all hover:bg-blue-500">
+            Сақтау
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-          <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-            <Bell className="w-5 h-5 text-blue-500" />
-            РҐР°Р±Р°СЂР»Р°РЅРґС‹СЂСѓР»Р°СЂ
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
+            <Bell className="h-5 w-5 text-blue-500" />
+            Хабарландырулар
           </h3>
           <div className="space-y-4">
             {notificationSettings.map((item) => (
-              <label key={item.id} className="flex items-center justify-between cursor-pointer group">
-                <span className="text-sm text-slate-600 group-hover:text-slate-900 transition-colors">{item.label}</span>
-                <div onClick={() => toggleNotification(item.id)} className={`w-12 h-6 rounded-full transition-all relative ${item.checked ? 'bg-blue-600' : 'bg-slate-200'}`}>
-                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${item.checked ? 'left-7' : 'left-1'}`}></div>
+              <label key={item.id} className="group flex cursor-pointer items-center justify-between">
+                <span className="text-sm text-slate-600 transition-colors group-hover:text-slate-900">{item.label}</span>
+                <div onClick={() => toggleNotification(item.id)} className={`relative h-6 w-12 rounded-full transition-all ${item.checked ? 'bg-blue-600' : 'bg-slate-200'}`}>
+                  <div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all ${item.checked ? 'left-7' : 'left-1'}`}></div>
                 </div>
               </label>
             ))}
           </div>
         </div>
 
-        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-          <h3 className="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
-            <Settings className="w-5 h-5 text-blue-500" />
-            ТљР°СѓС–РїСЃС–Р·РґС–Рє
+        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <h3 className="mb-6 flex items-center gap-2 text-lg font-bold text-slate-800">
+            <Settings className="h-5 w-5 text-blue-500" />
+            Қауіпсіздік
           </h3>
           <div className="space-y-4">
-            <button className="w-full py-3 px-4 rounded-xl border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all text-left flex items-center justify-between">
-              ТљТ±РїРёСЏ СЃУ©Р·РґС– У©Р·РіРµСЂС‚Сѓ
-              <ChevronRight className="w-4 h-4 text-slate-400" />
+            <button className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-all hover:bg-slate-50">
+              Құпия сөзді өзгерту
+              <ChevronRight className="h-4 w-4 text-slate-400" />
             </button>
-            <button className="w-full py-3 px-4 rounded-xl border border-slate-200 text-sm font-bold text-slate-700 hover:bg-slate-50 transition-all text-left flex items-center justify-between">
-              Р•РєС– С„Р°РєС‚РѕСЂР»С‹ Р°СѓС‚РµРЅС‚РёС„РёРєР°С†РёСЏ
-              <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full uppercase">УЁС€С–СЂСѓР»С–</span>
+            <button className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-all hover:bg-slate-50">
+              Екі факторлы аутентификация
+              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] uppercase text-slate-500">Өшірулі</span>
             </button>
-            <button className="w-full py-3 px-4 rounded-xl border border-slate-200 text-sm font-bold text-rose-600 hover:bg-rose-50 transition-all text-left flex items-center justify-between">
-              РЎРµСЃСЃРёСЏР»Р°СЂРґС‹ Р°СЏТ›С‚Р°Сѓ
+            <button className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-rose-600 transition-all hover:bg-rose-50">
+              Сессияларды аяқтау
             </button>
           </div>
         </div>
