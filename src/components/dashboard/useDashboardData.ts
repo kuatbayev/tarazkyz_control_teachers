@@ -26,84 +26,86 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
   const [profile, setProfile] = useState<Profile>(defaultProfile);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
+  const fetchDashboardData = async () => {
+    setIsLoadingData(true);
+
+    if (!hasSupabaseConfig) {
+      if (isLocalAuthBypassEnabled) {
+        setTeachersList(localMockTeachers);
+        setEventsList(localMockEvents);
+        setProfile(localMockProfile);
+      }
+
+      setIsLoadingData(false);
+      return;
+    }
+
+    try {
+      const [{ data: authData }, teachersRes, eventsRes, profileRes] = await Promise.all([
+        supabase.auth.getUser(),
+        supabase.from('teachers').select('*'),
+        supabase.from('events').select('*').order('date', { ascending: false }),
+        supabase.from('school_profile').select('*').limit(1).single(),
+      ]);
+
+      const userId = authData.user?.id;
+      const adminProfileRes = userId
+        ? await supabase.from('admin_profiles').select('*').eq('id', userId).maybeSingle()
+        : { data: null, error: null };
+
+      if (teachersRes.data) {
+        setTeachersList(
+          teachersRes.data.map((teacher) => ({
+            id: teacher.id,
+            name: teacher.name,
+            subject: teacher.subject,
+            score: 100,
+            rank: 0,
+            totalEvents: 0,
+            absences: 0,
+            latenesses: 0,
+            sickDays: 0,
+            lostLessons: 0,
+            substitutions: 0,
+            hasDocuments: teacher.has_documents,
+          })),
+        );
+      }
+
+      if (eventsRes.data) {
+        setEventsList(
+          eventsRes.data.map((event) => ({
+            id: event.id,
+            teacherId: event.teacher_id,
+            teacherName: '',
+            type: event.type,
+            date: event.date,
+            reason: event.reason || '',
+          })),
+        );
+      }
+
+      if (profileRes.data) {
+        setProfile({
+          name: adminProfileRes.data?.full_name || profileRes.data.director_name,
+          email: authData.user?.email || profileRes.data.email || '',
+          phone: profileRes.data.phone || '',
+          schoolName: profileRes.data.school_name,
+          academicYear: profileRes.data.academic_year,
+          currentTerm: profileRes.data.current_term,
+          position: adminProfileRes.data?.role || 'Мектеп директоры',
+          avatar: profileRes.data.avatar_url,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoadingData(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoadingData(true);
-      if (!hasSupabaseConfig) {
-        if (isLocalAuthBypassEnabled) {
-          setTeachersList(localMockTeachers);
-          setEventsList(localMockEvents);
-          setProfile(localMockProfile);
-        }
-        setIsLoadingData(false);
-        return;
-      }
-
-      try {
-        const [{ data: authData }, teachersRes, eventsRes, profileRes] = await Promise.all([
-          supabase.auth.getUser(),
-          supabase.from('teachers').select('*'),
-          supabase.from('events').select('*').order('date', { ascending: false }),
-          supabase.from('school_profile').select('*').limit(1).single(),
-        ]);
-
-        const userId = authData.user?.id;
-        const adminProfileRes = userId
-          ? await supabase.from('admin_profiles').select('*').eq('id', userId).maybeSingle()
-          : { data: null, error: null };
-
-        if (teachersRes.data) {
-          setTeachersList(
-            teachersRes.data.map((teacher) => ({
-              id: teacher.id,
-              name: teacher.name,
-              subject: teacher.subject,
-              score: 100,
-              rank: 0,
-              totalEvents: 0,
-              absences: 0,
-              latenesses: 0,
-              sickDays: 0,
-              lostLessons: 0,
-              substitutions: 0,
-              hasDocuments: teacher.has_documents,
-            })),
-          );
-        }
-
-        if (eventsRes.data) {
-          setEventsList(
-            eventsRes.data.map((event) => ({
-              id: event.id,
-              teacherId: event.teacher_id,
-              teacherName: '',
-              type: event.type,
-              date: event.date,
-              reason: event.reason || '',
-            })),
-          );
-        }
-
-        if (profileRes.data) {
-          setProfile({
-            name: adminProfileRes.data?.full_name || profileRes.data.director_name,
-            email: authData.user?.email || profileRes.data.email || '',
-            phone: profileRes.data.phone || '',
-            schoolName: profileRes.data.school_name,
-            academicYear: profileRes.data.academic_year,
-            currentTerm: profileRes.data.current_term,
-            position: adminProfileRes.data?.role || 'Мектеп директоры',
-            avatar: profileRes.data.avatar_url,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        setIsLoadingData(false);
-      }
-    };
-
-    fetchData();
+    fetchDashboardData();
   }, []);
 
   const handleAddTeacher = async (newTeacher: Partial<Teacher>) => {
@@ -271,6 +273,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
     profile,
     setProfile,
     isLoadingData,
+    fetchDashboardData,
     handleAddTeacher,
     handleDeleteTeacher,
     handleDeleteEvent,

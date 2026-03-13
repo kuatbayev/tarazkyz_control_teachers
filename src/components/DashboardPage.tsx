@@ -52,6 +52,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
     profile,
     setProfile,
     isLoadingData,
+    fetchDashboardData,
     handleAddTeacher,
     handleDeleteTeacher,
     handleDeleteEvent,
@@ -104,6 +105,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
         if (adminProfileResult.error) throw adminProfileResult.error;
       }
 
+      await fetchDashboardData();
       setShowSaveToast(true);
       setTimeout(() => setShowSaveToast(false), 3000);
     } catch (error: any) {

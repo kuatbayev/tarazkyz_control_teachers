@@ -265,18 +265,13 @@ export function SettingsTab({
           <Settings className="h-5 w-5 text-blue-500" />
           Қауіпсіздік
         </h3>
-        <div className="space-y-4">
-          <button
-            onClick={() => setIsPasswordModalOpen(true)}
-            className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-all hover:bg-slate-50"
-          >
-            Құпия сөзді өзгерту
-            <ChevronRight className="h-4 w-4 text-slate-400" />
-          </button>
-          <button className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-rose-600 transition-all hover:bg-rose-50">
-            Сессияларды аяқтау
-          </button>
-        </div>
+        <button
+          onClick={() => setIsPasswordModalOpen(true)}
+          className="flex w-full items-center justify-between rounded-xl border border-slate-200 px-4 py-3 text-left text-sm font-bold text-slate-700 transition-all hover:bg-slate-50"
+        >
+          Құпия сөзді өзгерту
+          <ChevronRight className="h-4 w-4 text-slate-400" />
+        </button>
       </div>
     </div>
   );
