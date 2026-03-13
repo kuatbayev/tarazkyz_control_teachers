@@ -750,7 +750,7 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-24 right-8 bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-3"
+            className="fixed top-24 right-8 bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-xl z-[9999] flex items-center gap-3"
           >
             <CheckCircle2 className="w-5 h-5" />
             <span className="font-bold text-sm">Өзгерістер сәтті сақталды!</span>
@@ -761,7 +761,7 @@ const DashboardPage = ({ onLogout }: { onLogout: () => void }) => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-24 right-8 bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-xl z-50 flex items-center gap-3"
+            className="fixed top-24 right-8 bg-blue-600 text-white px-6 py-3 rounded-2xl shadow-xl z-[9999] flex items-center gap-3"
           >
             <CheckCircle2 className="w-5 h-5" />
             <span className="font-bold text-sm">Құттықтау хаты жіберілді!</span>
