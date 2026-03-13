@@ -55,7 +55,6 @@ export const localMockEvents: Event[] = [
 export const localMockProfile: Profile = {
   name: 'Local Admin',
   email: 'admin@local.test',
-  phone: '+7 (700) 000-00-00',
   schoolName: 'Turkistan girls BIL',
   academicYear: '2025-2026',
   currentTerm: '3 term',

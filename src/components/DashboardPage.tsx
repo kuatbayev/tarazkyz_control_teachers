@@ -81,7 +81,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
         academic_year: profile.academicYear,
         current_term: profile.currentTerm,
         email: profile.email,
-        phone: profile.phone,
         avatar_url: profile.avatar,
       };
 

@@ -39,7 +39,6 @@ export interface Event {
 export interface Profile {
   name: string;
   email: string;
-  phone: string;
   schoolName: string;
   academicYear: string;
   currentTerm: string;

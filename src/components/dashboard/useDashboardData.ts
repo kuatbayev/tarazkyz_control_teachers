@@ -7,7 +7,6 @@ import type { Event, Profile, Teacher } from '../../types';
 const defaultProfile: Profile = {
   name: 'Асхат Б.',
   email: 'admin@bil.edu.kz',
-  phone: '+7 (707) 123-45-67',
   schoolName: 'Turkistan girls BIL',
   academicYear: '2025-2026 оқу жылы',
   currentTerm: '3 тоқсан',
@@ -89,7 +88,6 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
         setProfile({
           name: adminProfileRes.data?.full_name || profileRes.data.director_name,
           email: authData.user?.email || profileRes.data.email || '',
-          phone: profileRes.data.phone || '',
           schoolName: profileRes.data.school_name,
           academicYear: profileRes.data.academic_year,
           currentTerm: profileRes.data.current_term,
