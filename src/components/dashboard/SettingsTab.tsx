@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronRight, Settings, Users, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { TERM_OPTIONS } from '../../data/options';
 import type { Profile } from '../../types';
 
 type PasswordChangeResult = {
@@ -226,11 +227,11 @@ export function SettingsTab({
                 onChange={(e) => setProfile({ ...profile, currentTerm: e.target.value })}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition-all focus:ring-2 focus:ring-blue-500"
               >
-                <option>Жалпы</option>
-                <option>1 тоқсан</option>
-                <option>2 тоқсан</option>
-                <option>3 тоқсан</option>
-                <option>4 тоқсан</option>
+                {TERM_OPTIONS.map((term) => (
+                  <option key={term.value} value={term.value}>
+                    {term.label}
+                  </option>
+                ))}
               </select>
             </div>
           </div>

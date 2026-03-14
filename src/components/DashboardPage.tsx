@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AlertTriangle,
   BellRing,
@@ -22,7 +22,7 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 import { AddEventModal } from './AddEventModal';
 import { AddTeacherModal } from './AddTeacherModal';
 import { COLORS } from '../data/mockData';
-import { ALL_EVENT_TYPES_LABEL, ALL_SUBJECTS_LABEL, EVENT_TYPES } from '../data/options';
+import { ABSENCE_EVENT_TYPES, ALL_EVENT_TYPES_LABEL, ALL_SUBJECTS_LABEL, EVENT_TYPES, TERM_OPTIONS } from '../data/options';
 import { AnalyticsTab } from './dashboard/AnalyticsTab';
 import { buildDashboardAnalytics } from './dashboard/analytics';
 import { DashboardSidebar, DashboardTopBar } from './dashboard/DashboardLayout';
@@ -31,6 +31,7 @@ import { SettingsTab } from './dashboard/SettingsTab';
 import { TeachersTab } from './dashboard/TeachersTab';
 import { useDashboardData } from './dashboard/useDashboardData';
 import { hasSupabaseConfig, supabase } from '../lib/supabase';
+import { filterEventsByTerm } from '../lib/termFilters';
 import type { Event, Teacher } from '../types';
 
 type ActiveTab = 'dashboard' | 'teachers' | 'events' | 'analytics' | 'ranking' | 'settings';
@@ -44,6 +45,8 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [subjectFilter, setSubjectFilter] = useState(ALL_SUBJECTS_LABEL);
   const [eventTypeFilter, setEventTypeFilter] = useState(ALL_EVENT_TYPES_LABEL);
+  const [selectedTerm, setSelectedTerm] = useState('Жалпы');
+  const [teacherViewMode, setTeacherViewMode] = useState<'all' | 'absentOnly'>('absentOnly');
   const [teacherSort, setTeacherSort] = useState<{ key: keyof Teacher; direction: 'asc' | 'desc' }>({ key: 'rank', direction: 'asc' });
   const [eventSort, setEventSort] = useState<{ key: keyof Event; direction: 'asc' | 'desc' }>({ key: 'date', direction: 'desc' });
   const [showSaveToast, setShowSaveToast] = useState(false);
@@ -146,11 +149,35 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
     }
   };
 
-  const { pieData, eventsWithTeacherNames, derivedTeachers, dynamicLineData, barData, schoolKPIs } = buildDashboardAnalytics(teachersList, eventsList);
+  useEffect(() => {
+    setSelectedTerm(profile.currentTerm || 'Жалпы');
+  }, [profile.currentTerm]);
+
+  const filteredEvents: Event[] = filterEventsByTerm<Event>(eventsList, profile.academicYear, selectedTerm);
+  const { pieData, eventsWithTeacherNames, derivedTeachers, dynamicLineData, barData, schoolKPIs } = buildDashboardAnalytics(teachersList, filteredEvents);
+  const absentTeacherIds = new Set(
+    eventsWithTeacherNames.filter((event) => ABSENCE_EVENT_TYPES.includes(event.type as (typeof ABSENCE_EVENT_TYPES)[number])).map((event) => event.teacherId),
+  );
+  const teachersForCurrentTerm = selectedTerm === 'Жалпы' ? derivedTeachers : derivedTeachers.filter((teacher) => teacher.totalEvents > 0);
+  const visibleTeachers =
+    teacherViewMode === 'absentOnly' && selectedTerm !== 'Жалпы'
+      ? teachersForCurrentTerm.filter((teacher) => absentTeacherIds.has(teacher.id))
+      : teachersForCurrentTerm;
+  const selectedTermLabel = TERM_OPTIONS.find((term) => term.value === selectedTerm)?.label ?? selectedTerm;
+
+  useEffect(() => {
+    if (selectedTeacherId && !visibleTeachers.some((teacher) => teacher.id === selectedTeacherId)) {
+      setSelectedTeacherId(null);
+    }
+  }, [selectedTeacherId, visibleTeachers]);
+
   const selectedTeacher = derivedTeachers.find((teacher) => teacher.id === selectedTeacherId) ?? null;
-  const rankingTeachers = [...derivedTeachers].sort((a, b) => b.score - a.score);
+  const rankingTeachers = [...visibleTeachers].sort((a, b) => b.score - a.score);
   const topTeachers = rankingTeachers.slice(0, 5);
   const recentEvents = (selectedTeacherId ? eventsWithTeacherNames.filter((event) => event.teacherId === selectedTeacherId) : eventsWithTeacherNames).slice(0, 12);
+  const absenceEvents = eventsWithTeacherNames.filter((event) => ABSENCE_EVENT_TYPES.includes(event.type as (typeof ABSENCE_EVENT_TYPES)[number]));
+  const unexcusedAbsenceCount = eventsWithTeacherNames.filter((event) => event.type === 'Ескертпей сабаққа келмеуі').length;
+  const absenceTeacherCount = new Set(absenceEvents.map((event) => event.teacherId)).size;
   const selectedTeacherEvents = selectedTeacherId
     ? eventsWithTeacherNames.filter((event) => event.teacherId === selectedTeacherId)
     : [];
@@ -226,28 +253,45 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                 <div className="flex flex-wrap items-center gap-3">
                   <select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500" value={selectedTeacherId || ''} onChange={(e) => setSelectedTeacherId(e.target.value || null)}>
                     <option value="">Барлық мұғалімдер (мектеп шолуы)</option>
-                    {derivedTeachers.map((teacher) => (
+                    {visibleTeachers.map((teacher) => (
                       <option key={teacher.id} value={teacher.id}>
                         {teacher.name}
                       </option>
                     ))}
                   </select>
-                  <select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500">
+                  <select
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
+                    value={profile.academicYear}
+                    onChange={(e) => setProfile({ ...profile, academicYear: e.target.value })}
+                  >
                     <option>2025-2026 оқу жылы</option>
                     <option>2024-2025 оқу жылы</option>
                   </select>
-                  <select className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Жалпы</option>
-                    <option>1 тоқсан</option>
-                    <option>2 тоқсан</option>
-                    <option>3 тоқсан</option>
-                    <option>4 тоқсан</option>
+                  <select
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
+                    value={selectedTerm}
+                    onChange={(e) => setSelectedTerm(e.target.value)}
+                  >
+                    {TERM_OPTIONS.map((term) => (
+                      <option key={term.value} value={term.value}>
+                        {term.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 {selectedTeacherId && (
                   <button onClick={() => setSelectedTeacherId(null)} className="text-sm font-bold text-slate-500 hover:text-slate-800">
                     Сүзгіні тазалау
                   </button>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700">{selectedTermLabel}</span>
+                {!selectedTeacher && selectedTerm !== 'Жалпы' && (
+                  <span className="rounded-full bg-rose-50 px-4 py-2 text-sm font-bold text-rose-700">
+                    Келмеген мұғалімдер: {absenceTeacherCount}
+                  </span>
                 )}
               </div>
 
@@ -276,6 +320,23 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                   </div>
                 ))}
               </div>
+
+              {!selectedTeacher && (
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
+                    <p className="text-sm font-medium text-slate-500">Келмеген мұғалімдер</p>
+                    <p className="mt-2 text-3xl font-bold text-slate-800">{absenceTeacherCount}</p>
+                  </div>
+                  <div className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
+                    <p className="text-sm font-medium text-slate-500">Жалпы келмеу саны</p>
+                    <p className="mt-2 text-3xl font-bold text-slate-800">{absenceEvents.length}</p>
+                  </div>
+                  <div className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
+                    <p className="text-sm font-medium text-slate-500">Ескертпей келмеу</p>
+                    <p className="mt-2 text-3xl font-bold text-slate-800">{unexcusedAbsenceCount}</p>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div className="space-y-8 lg:col-span-2">
@@ -438,10 +499,12 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
 
           {activeTab === 'teachers' && (
             <TeachersTab
-              derivedTeachers={derivedTeachers}
+              derivedTeachers={visibleTeachers}
+              teacherViewMode={teacherViewMode}
               searchTerm={searchTerm}
               subjectFilter={subjectFilter}
               teacherSort={teacherSort}
+              setTeacherViewMode={setTeacherViewMode}
               setSearchTerm={setSearchTerm}
               setSubjectFilter={setSubjectFilter}
               setTeacherSort={setTeacherSort}
@@ -458,15 +521,17 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
           {activeTab === 'events' && (
             <EventsTab
               eventSort={eventSort}
+              selectedTerm={selectedTerm}
               eventTypeFilter={eventTypeFilter}
               eventsWithTeacherNames={eventsWithTeacherNames}
               setEventSort={setEventSort}
+              setSelectedTerm={setSelectedTerm}
               setEventTypeFilter={setEventTypeFilter}
               onAddEvent={() => setIsAddEventModalOpen(true)}
               onDeleteEvent={handleDeleteEvent}
             />
           )}
-          {activeTab === 'analytics' && <AnalyticsTab barData={barData} colors={COLORS} dynamicLineData={dynamicLineData} pieData={pieData} />}
+          {activeTab === 'analytics' && <AnalyticsTab barData={barData} colors={COLORS} dynamicLineData={dynamicLineData} pieData={pieData} selectedTermLabel={selectedTermLabel} />}
           {activeTab === 'settings' && (
             <SettingsTab
               handleChangePassword={handleChangePassword}

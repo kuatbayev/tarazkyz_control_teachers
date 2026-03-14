@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
-import { DEFAULT_EVENT_TYPE } from '../../data/options';
+﻿import { useEffect, useState } from 'react';
+import { DEFAULT_EVENT_TYPE, normalizeTermValue } from '../../data/options';
 import { initialEvents, localMockEvents, localMockProfile, localMockTeachers, teachers } from '../../data/mockData';
 import { hasSupabaseConfig, isLocalAuthBypassEnabled, supabase } from '../../lib/supabase';
 import type { Event, Profile, Teacher } from '../../types';
 
 const defaultProfile: Profile = {
-  name: 'Асхат Б.',
+  name: 'РђСЃС…Р°С‚ Р‘.',
   email: 'admin@bil.edu.kz',
   schoolName: 'Turkistan girls BIL',
-  academicYear: '2025-2026 оқу жылы',
-  currentTerm: '3 тоқсан',
-  position: 'Мектеп директоры',
+  academicYear: '2025-2026 РѕТ›Сѓ Р¶С‹Р»С‹',
+  currentTerm: '3 С‚РѕТ›СЃР°РЅ',
+  position: 'РњРµРєС‚РµРї РґРёСЂРµРєС‚РѕСЂС‹',
   avatar: null,
 };
 
@@ -32,7 +32,10 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       if (isLocalAuthBypassEnabled) {
         setTeachersList(localMockTeachers);
         setEventsList(localMockEvents);
-        setProfile(localMockProfile);
+        setProfile({
+          ...localMockProfile,
+          currentTerm: normalizeTermValue(localMockProfile.currentTerm),
+        });
       }
 
       setIsLoadingData(false);
@@ -90,8 +93,8 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
           email: profileRes.data.email || authData.user?.email || '',
           schoolName: profileRes.data.school_name,
           academicYear: profileRes.data.academic_year,
-          currentTerm: profileRes.data.current_term,
-          position: adminProfileRes.data?.role || 'Мектеп директоры',
+          currentTerm: normalizeTermValue(profileRes.data.current_term || 'Жалпы'),
+          position: adminProfileRes.data?.role || 'РњРµРєС‚РµРї РґРёСЂРµРєС‚РѕСЂС‹',
           avatar: profileRes.data.avatar_url,
         });
       }
@@ -110,8 +113,8 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
     if (!hasSupabaseConfig) {
       const localTeacher: Teacher = {
         id: `local-teacher-${Date.now()}`,
-        name: newTeacher.name || 'Жаңа мұғалім',
-        subject: newTeacher.subject || 'Пән',
+        name: newTeacher.name || 'Р–Р°ТЈР° РјТ±Т“Р°Р»С–Рј',
+        subject: newTeacher.subject || 'РџУ™РЅ',
         score: 100,
         rank: teachersList.length + 1,
         totalEvents: 0,
@@ -128,8 +131,8 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
     }
 
     const teacherData = {
-      name: newTeacher.name || 'Жаңа мұғалім',
-      subject: newTeacher.subject || 'Пән',
+      name: newTeacher.name || 'Р–Р°ТЈР° РјТ±Т“Р°Р»С–Рј',
+      subject: newTeacher.subject || 'РџУ™РЅ',
       has_documents: true,
     };
 
@@ -161,13 +164,13 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       return true;
     } catch (error: any) {
       console.error('Error adding teacher:', error);
-      alert(`Мұғалімді қосу кезінде қате шықты: ${error.message}`);
+      alert(`РњТ±Т“Р°Р»С–РјРґС– Т›РѕСЃСѓ РєРµР·С–РЅРґРµ Т›Р°С‚Рµ С€С‹Т›С‚С‹: ${error.message}`);
       return false;
     }
   };
 
   const handleDeleteTeacher = async (id: string) => {
-    const confirmedTeacherDelete = window.confirm('Осы мұғалімді шынымен өшіргіңіз келе ме?');
+    const confirmedTeacherDelete = window.confirm('РћСЃС‹ РјТ±Т“Р°Р»С–РјРґС– С€С‹РЅС‹РјРµРЅ У©С€С–СЂРіС–ТЈС–Р· РєРµР»Рµ РјРµ?');
     if (!confirmedTeacherDelete) return;
 
     if (!hasSupabaseConfig) {
@@ -190,12 +193,12 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       }
     } catch (error: any) {
       console.error('Error deleting teacher:', error);
-      alert(`Мұғалімді өшіру кезінде қате шықты: ${error.message}`);
+      alert(`РњТ±Т“Р°Р»С–РјРґС– У©С€С–СЂСѓ РєРµР·С–РЅРґРµ Т›Р°С‚Рµ С€С‹Т›С‚С‹: ${error.message}`);
     }
   };
 
   const handleDeleteEvent = async (id: string) => {
-    const confirmedEventDelete = window.confirm('Осы оқиғаны шынымен өшіргіңіз келе ме?');
+    const confirmedEventDelete = window.confirm('РћСЃС‹ РѕТ›РёТ“Р°РЅС‹ С€С‹РЅС‹РјРµРЅ У©С€С–СЂРіС–ТЈС–Р· РєРµР»Рµ РјРµ?');
     if (!confirmedEventDelete) return;
 
     if (!hasSupabaseConfig) {
@@ -210,7 +213,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       setEventsList(eventsList.filter((event) => event.id !== id));
     } catch (error: any) {
       console.error('Error deleting event:', error);
-      alert(`Оқиғаны өшіру кезінде қате шықты: ${error.message}`);
+      alert(`РћТ›РёТ“Р°РЅС‹ У©С€С–СЂСѓ РєРµР·С–РЅРґРµ Т›Р°С‚Рµ С€С‹Т›С‚С‹: ${error.message}`);
     }
   };
 
@@ -220,7 +223,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       const localEvent: Event = {
         id: `local-event-${Date.now()}`,
         teacherId: newEvent.teacherId || '',
-        teacherName: teacher?.name || 'Белгісіз мұғалім',
+        teacherName: teacher?.name || 'Р‘РµР»РіС–СЃС–Р· РјТ±Т“Р°Р»С–Рј',
         type: newEvent.type || DEFAULT_EVENT_TYPE,
         date: newEvent.date || new Date().toISOString().split('T')[0],
         reason: newEvent.reason || '',
@@ -248,7 +251,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
           {
             id: event.id,
             teacherId: event.teacher_id,
-            teacherName: teacher?.name || newEvent.teacherName || 'Белгісіз',
+            teacherName: teacher?.name || newEvent.teacherName || 'Р‘РµР»РіС–СЃС–Р·',
             type: event.type,
             date: event.date,
             reason: event.reason || '',
@@ -260,7 +263,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       return true;
     } catch (error: any) {
       console.error('Error adding event:', error);
-      alert(`Оқиғаны қосу кезінде қате шықты: ${error.message}`);
+      alert(`РћТ›РёТ“Р°РЅС‹ Т›РѕСЃСѓ РєРµР·С–РЅРґРµ Т›Р°С‚Рµ С€С‹Т›С‚С‹: ${error.message}`);
       return false;
     }
   };
@@ -278,3 +281,4 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
     handleAddEvent,
   };
 }
+

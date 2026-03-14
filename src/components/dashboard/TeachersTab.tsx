@@ -7,9 +7,11 @@ type TeacherSort = { key: keyof Teacher; direction: 'asc' | 'desc' };
 
 type TeachersTabProps = {
   derivedTeachers: Teacher[];
+  teacherViewMode: 'all' | 'absentOnly';
   searchTerm: string;
   subjectFilter: string;
   teacherSort: TeacherSort;
+  setTeacherViewMode: (value: 'all' | 'absentOnly') => void;
   setSearchTerm: (value: string) => void;
   setSubjectFilter: (value: string) => void;
   setTeacherSort: (value: TeacherSort) => void;
@@ -22,9 +24,11 @@ type TeachersTabProps = {
 
 export function TeachersTab({
   derivedTeachers,
+  teacherViewMode,
   searchTerm,
   subjectFilter,
   teacherSort,
+  setTeacherViewMode,
   setSearchTerm,
   setSubjectFilter,
   setTeacherSort,
@@ -45,6 +49,20 @@ export function TeachersTab({
 
       <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
         <div className="flex items-center gap-4 border-b border-slate-100 p-6">
+          <div className="flex overflow-hidden rounded-xl bg-slate-100 p-1">
+            <button
+              onClick={() => setTeacherViewMode('all')}
+              className={`rounded-lg px-3 py-2 text-sm font-bold transition-all ${teacherViewMode === 'all' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}
+            >
+              ???????
+            </button>
+            <button
+              onClick={() => setTeacherViewMode('absentOnly')}
+              className={`rounded-lg px-3 py-2 text-sm font-bold transition-all ${teacherViewMode === 'absentOnly' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}
+            >
+              ??????????? ????
+            </button>
+          </div>
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input

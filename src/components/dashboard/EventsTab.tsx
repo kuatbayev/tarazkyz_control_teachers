@@ -1,15 +1,17 @@
 import React from 'react';
 import { ArrowDown, ArrowUp, ArrowUpDown, Trash2 } from 'lucide-react';
-import { ALL_EVENT_TYPES_LABEL, EVENT_TYPES } from '../../data/options';
+import { ALL_EVENT_TYPES_LABEL, EVENT_TYPES, TERM_OPTIONS } from '../../data/options';
 import type { Event } from '../../types';
 
 type EventSort = { key: keyof Event; direction: 'asc' | 'desc' };
 
 type EventsTabProps = {
   eventSort: EventSort;
+  selectedTerm: string;
   eventTypeFilter: string;
   eventsWithTeacherNames: Event[];
   setEventSort: (value: EventSort) => void;
+  setSelectedTerm: (value: string) => void;
   setEventTypeFilter: (value: string) => void;
   onAddEvent: () => void;
   onDeleteEvent: (id: string) => void;
@@ -17,9 +19,11 @@ type EventsTabProps = {
 
 export function EventsTab({
   eventSort,
+  selectedTerm,
   eventTypeFilter,
   eventsWithTeacherNames,
   setEventSort,
+  setSelectedTerm,
   setEventTypeFilter,
   onAddEvent,
   onDeleteEvent,
@@ -29,6 +33,17 @@ export function EventsTab({
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-slate-800">Барлық оқиғалар</h2>
         <div className="flex gap-3">
+          <select
+            value={selectedTerm}
+            onChange={(e) => setSelectedTerm(e.target.value)}
+            className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold outline-none transition-all focus:ring-2 focus:ring-blue-500"
+          >
+            {TERM_OPTIONS.map((term) => (
+              <option key={term.value} value={term.value}>
+                {term.label}
+              </option>
+            ))}
+          </select>
           <select
             value={eventTypeFilter}
             onChange={(e) => setEventTypeFilter(e.target.value)}

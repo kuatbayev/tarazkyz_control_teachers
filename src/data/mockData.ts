@@ -1,4 +1,4 @@
-import type { Event, Profile, Teacher } from '../types';
+﻿import type { Event, Profile, Teacher } from '../types';
 
 export const teachers: Teacher[] = [];
 
@@ -38,7 +38,7 @@ export const localMockEvents: Event[] = [
     id: 'local-event-1',
     teacherId: 'local-teacher-1',
     teacherName: 'Ainur Sarsen',
-    type: 'Сабаққа кешігу',
+    type: 'РЎР°Р±Р°Т›Т›Р° РєРµС€С–РіСѓ',
     date: '2026-03-10',
     reason: 'Morning traffic',
   },
@@ -46,7 +46,7 @@ export const localMockEvents: Event[] = [
     id: 'local-event-2',
     teacherId: 'local-teacher-2',
     teacherName: 'Dias Tolegen',
-    type: 'Сабаққа келмеу',
+    type: 'РЎР°Р±Р°Т›Т›Р° РєРµР»РјРµСѓ',
     date: '2026-03-08',
     reason: 'Medical leave',
   },
@@ -57,7 +57,7 @@ export const localMockProfile: Profile = {
   email: 'admin@local.test',
   schoolName: 'Turkistan girls BIL',
   academicYear: '2025-2026',
-  currentTerm: '3 term',
+  currentTerm: '3 тоқсан',
   position: 'Local development mode',
   avatar: null,
 };
@@ -65,3 +65,4 @@ export const localMockProfile: Profile = {
 export const COLORS = ['#3B82F6', '#F59E0B', '#EF4444', '#10B981', '#8B5CF6', '#EC4899', '#64748B'];
 
 export const initialEvents: Event[] = [];
+

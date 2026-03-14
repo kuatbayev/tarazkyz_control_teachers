@@ -26,12 +26,16 @@ type AnalyticsTabProps = {
   colors: string[];
   dynamicLineData: { name: string; events: number }[];
   pieData: AnalyticsPoint[];
+  selectedTermLabel: string;
 };
 
-export function AnalyticsTab({ barData, colors, dynamicLineData, pieData }: AnalyticsTabProps) {
+export function AnalyticsTab({ barData, colors, dynamicLineData, pieData, selectedTermLabel }: AnalyticsTabProps) {
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-bold text-slate-800">Аналитика және есептер</h2>
+      <div>
+        <h2 className="text-2xl font-bold text-slate-800">?????????????????? ???????? ??????????????</h2>
+        <p className="mt-1 text-sm text-slate-500">{selectedTermLabel}</p>
+      </div>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
