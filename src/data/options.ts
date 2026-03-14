@@ -1,4 +1,4 @@
-export const SUBJECT_OPTIONS = [
+﻿export const SUBJECT_OPTIONS = [
   'Математика',
   'Физика',
   'Тарих',

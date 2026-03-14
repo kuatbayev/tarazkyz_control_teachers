@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { AlertTriangle, Calendar, Clock, Star, Stethoscope, UserMinus } from 'lucide-react';
 import { DISPLAY_MONTHS, EVENT_TYPES, MONTH_NAMES } from '../../data/options';
 import type { Event, KPI, Teacher } from '../../types';
@@ -11,17 +11,12 @@ export function buildDashboardAnalytics(teachersList: Teacher[], eventsList: Eve
 
   const eventsWithTeacherNames = eventsList.map((event) => {
     const teacher = teachersList.find((item) => item.id === event.teacherId);
-
-    return {
-      ...event,
-      teacherName: teacher?.name || event.teacherName || 'Белгісіз',
-    };
+    return { ...event, teacherName: teacher?.name || event.teacherName || 'Белгісіз' };
   });
 
   const derivedTeachers = teachersList
     .map((teacher) => {
       const teacherEvents = eventsWithTeacherNames.filter((event) => event.teacherId === teacher.id);
-
       let score = 100;
       let absences = 0;
       let latenesses = 0;
@@ -61,15 +56,7 @@ export function buildDashboardAnalytics(teachersList: Teacher[], eventsList: Eve
         }
       });
 
-      return {
-        ...teacher,
-        score: Math.max(0, score),
-        totalEvents: teacherEvents.length,
-        absences,
-        latenesses,
-        sickDays,
-        lostLessons: teacher.lostLessons || lostLessons,
-      };
+      return { ...teacher, score: Math.max(0, score), totalEvents: teacherEvents.length, absences, latenesses, sickDays, lostLessons: teacher.lostLessons || lostLessons };
     })
     .sort((a, b) => b.score - a.score)
     .map((teacher, index) => ({ ...teacher, rank: index + 1 }));
@@ -78,13 +65,9 @@ export function buildDashboardAnalytics(teachersList: Teacher[], eventsList: Eve
     const monthIndex = MONTH_NAMES.indexOf(monthName);
     const count = eventsList.filter((event) => {
       const parts = event.date.split('-');
-      if (parts.length === 3) {
-        const month = parseInt(parts[1], 10) - 1;
-        return month === monthIndex;
-      }
-      return false;
+      if (parts.length !== 3) return false;
+      return parseInt(parts[1], 10) - 1 === monthIndex;
     }).length;
-
     return { name: monthName, events: count };
   });
 
@@ -106,12 +89,5 @@ export function buildDashboardAnalytics(teachersList: Teacher[], eventsList: Eve
     { title: 'Қауіпті аймақтағы мұғалімдер', value: derivedTeachers.filter((teacher) => teacher.score < 75).length, trend: 'Мониторинг', trendType: 'neutral', icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-600' },
   ];
 
-  return {
-    pieData,
-    eventsWithTeacherNames,
-    derivedTeachers,
-    dynamicLineData,
-    barData,
-    schoolKPIs,
-  };
+  return { pieData, eventsWithTeacherNames, derivedTeachers, dynamicLineData, barData, schoolKPIs };
 }

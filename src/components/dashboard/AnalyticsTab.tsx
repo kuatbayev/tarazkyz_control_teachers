@@ -33,7 +33,7 @@ export function AnalyticsTab({ barData, colors, dynamicLineData, pieData, select
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-slate-800">?????????????????? ???????? ??????????????</h2>
+        <h2 className="text-2xl font-bold text-slate-800">Аналитика және есептер</h2>
         <p className="mt-1 text-sm text-slate-500">{selectedTermLabel}</p>
       </div>
 
