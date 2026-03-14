@@ -54,13 +54,13 @@ export function TeachersTab({
               onClick={() => setTeacherViewMode('all')}
               className={`rounded-lg px-3 py-2 text-sm font-bold transition-all ${teacherViewMode === 'all' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}
             >
-              ???????
+              Барлығы
             </button>
             <button
               onClick={() => setTeacherViewMode('absentOnly')}
               className={`rounded-lg px-3 py-2 text-sm font-bold transition-all ${teacherViewMode === 'absentOnly' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500'}`}
             >
-              ??????????? ????
+              Келмегендер ғана
             </button>
           </div>
           <div className="relative flex-1">

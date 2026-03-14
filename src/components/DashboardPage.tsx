@@ -46,7 +46,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   const [subjectFilter, setSubjectFilter] = useState(ALL_SUBJECTS_LABEL);
   const [eventTypeFilter, setEventTypeFilter] = useState(ALL_EVENT_TYPES_LABEL);
   const [selectedTerm, setSelectedTerm] = useState('Жалпы');
-  const [teacherViewMode, setTeacherViewMode] = useState<'all' | 'absentOnly'>('absentOnly');
+  const [teacherViewMode, setTeacherViewMode] = useState<'all' | 'absentOnly'>('all');
   const [teacherSort, setTeacherSort] = useState<{ key: keyof Teacher; direction: 'asc' | 'desc' }>({ key: 'rank', direction: 'asc' });
   const [eventSort, setEventSort] = useState<{ key: keyof Event; direction: 'asc' | 'desc' }>({ key: 'date', direction: 'desc' });
   const [showSaveToast, setShowSaveToast] = useState(false);
@@ -162,7 +162,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   const visibleTeachers =
     teacherViewMode === 'absentOnly' && selectedTerm !== 'Жалпы'
       ? teachersForCurrentTerm.filter((teacher) => absentTeacherIds.has(teacher.id))
-      : teachersForCurrentTerm;
+      : derivedTeachers;
   const selectedTermLabel = TERM_OPTIONS.find((term) => term.value === selectedTerm)?.label ?? selectedTerm;
 
   useEffect(() => {
