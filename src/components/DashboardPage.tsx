@@ -6,7 +6,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   AlertTriangle,
-  BellRing,
   Briefcase,
   Calendar,
   CheckCircle2,
@@ -187,7 +186,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
         { title: 'Сабаққа кешікті', value: selectedTeacherEventCounts['Сабаққа кешікті'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
         { title: 'БТС емтиханына келмеді', value: selectedTeacherEventCounts['БТС емтиханына келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
         { title: 'PET/KET емтиханына келмеді', value: selectedTeacherEventCounts['PET/KET емтиханына келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-pink-600' },
-        { title: 'Кеш ескерту', value: selectedTeacherEventCounts['Кеш ескерту'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
         { title: 'Ауырып қалуы', value: selectedTeacherEventCounts['Ауырып қалуы'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
         { title: 'Сұранды', value: selectedTeacherEventCounts['Сұранды'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <CheckCircle2 className="h-5 w-5" />, color: 'bg-sky-600' },
         { title: 'Семинар / командировкаға кетуі', value: selectedTeacherEventCounts['Семинар / командировкаға кетуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
@@ -299,7 +297,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                       { title: 'Кешігу', value: selectedTeacher.latenesses, trend: 'Жеке', trendType: 'neutral' as const, icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
                       { title: 'Тәртіп көрсеткіші', value: `${selectedTeacher.score}%`, trend: `Рейтингте #${selectedTeacher.rank}`, trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-indigo-600' },
                       { title: 'БТС емтиханына келмеді', value: selectedTeacherEventCounts['БТС емтиханына келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
-                      { title: 'Кеш ескерту', value: selectedTeacherEventCounts['Кеш ескерту'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
                       { title: 'Ауырып қалуы', value: selectedTeacherEventCounts['Ауырып қалуы'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
                       { title: 'Семинар / командировкаға кетуі', value: selectedTeacherEventCounts['Семинар / командировкаға кетуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
                     ]
