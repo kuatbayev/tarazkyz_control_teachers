@@ -35,20 +35,21 @@ export function buildDashboardAnalytics(teachersList: Teacher[], eventsList: Eve
             latenesses += 1;
             break;
           case 'БТС емтиханына келмеді':
-            score -= 15;
+            score -= 5;
             absences += 1;
             lostLessons += 1;
             break;
           case 'PET/KET емтиханына келмеді':
-            score -= 15;
+            score -= 5;
             absences += 1;
             lostLessons += 1;
             break;
           case 'Ауырып қалуы':
-            score -= 1;
+            score -= 2;
             sickDays += 1;
             break;
           case 'Сұранды':
+            score -= 1;
             break;
           case 'Семинар / командировкаға кетуі':
             break;
