@@ -47,11 +47,6 @@ export function buildDashboardAnalytics(teachersList: Teacher[], eventsList: Eve
           case 'Кеш ескерту':
             score -= 3;
             break;
-          case 'Ескертпей сабаққа келмеді':
-            score -= 10;
-            absences += 1;
-            lostLessons += 1;
-            break;
           case 'Ауырып қалуы':
             score -= 1;
             sickDays += 1;

@@ -171,7 +171,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   const topTeachers = rankingTeachers.slice(0, 5);
   const recentEvents = (selectedTeacherId ? eventsWithTeacherNames.filter((event) => event.teacherId === selectedTeacherId) : eventsWithTeacherNames).slice(0, 12);
   const absenceEvents = eventsWithTeacherNames.filter((event) => ABSENCE_EVENT_TYPES.includes(event.type as (typeof ABSENCE_EVENT_TYPES)[number]));
-  const unexcusedAbsenceCount = eventsWithTeacherNames.filter((event) => event.type === 'Ескертпей сабаққа келмеді').length;
+  const latenessCount = eventsWithTeacherNames.filter((event) => event.type === 'Сабаққа кешікті').length;
   const absenceTeacherCount = new Set(absenceEvents.map((event) => event.teacherId)).size;
   const selectedTeacherEvents = selectedTeacherId
     ? eventsWithTeacherNames.filter((event) => event.teacherId === selectedTeacherId)
@@ -188,7 +188,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
         { title: 'БТС емтиханына келмеді', value: selectedTeacherEventCounts['БТС емтиханына келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
         { title: 'PET/KET емтиханына келмеді', value: selectedTeacherEventCounts['PET/KET емтиханына келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-pink-600' },
         { title: 'Кеш ескерту', value: selectedTeacherEventCounts['Кеш ескерту'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
-        { title: 'Ескертпей сабаққа келмеді', value: selectedTeacherEventCounts['Ескертпей сабаққа келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
         { title: 'Ауырып қалуы', value: selectedTeacherEventCounts['Ауырып қалуы'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
         { title: 'Сұранды', value: selectedTeacherEventCounts['Сұранды'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <CheckCircle2 className="h-5 w-5" />, color: 'bg-sky-600' },
         { title: 'Семинар / командировкаға кетуі', value: selectedTeacherEventCounts['Семинар / командировкаға кетуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
@@ -301,7 +300,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                       { title: 'Тәртіп көрсеткіші', value: `${selectedTeacher.score}%`, trend: `Рейтингте #${selectedTeacher.rank}`, trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-indigo-600' },
                       { title: 'БТС емтиханына келмеді', value: selectedTeacherEventCounts['БТС емтиханына келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
                       { title: 'Кеш ескерту', value: selectedTeacherEventCounts['Кеш ескерту'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
-                      { title: 'Ескертпей сабаққа келмеді', value: selectedTeacherEventCounts['Ескертпей сабаққа келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
                       { title: 'Ауырып қалуы', value: selectedTeacherEventCounts['Ауырып қалуы'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
                       { title: 'Семинар / командировкаға кетуі', value: selectedTeacherEventCounts['Семинар / командировкаға кетуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
                     ]
@@ -329,8 +327,8 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                     <p className="mt-2 text-3xl font-bold text-slate-800">{absenceEvents.length}</p>
                   </div>
                   <div className="rounded-2xl border border-rose-100 bg-white p-5 shadow-sm">
-                    <p className="text-sm font-medium text-slate-500">Ескертпей келмеу</p>
-                    <p className="mt-2 text-3xl font-bold text-slate-800">{unexcusedAbsenceCount}</p>
+                    <p className="text-sm font-medium text-slate-500">Кешігу саны</p>
+                    <p className="mt-2 text-3xl font-bold text-slate-800">{latenessCount}</p>
                   </div>
                 </div>
               )}
