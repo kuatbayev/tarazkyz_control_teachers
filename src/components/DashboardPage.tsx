@@ -171,7 +171,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   const topTeachers = rankingTeachers.slice(0, 5);
   const recentEvents = (selectedTeacherId ? eventsWithTeacherNames.filter((event) => event.teacherId === selectedTeacherId) : eventsWithTeacherNames).slice(0, 12);
   const absenceEvents = eventsWithTeacherNames.filter((event) => ABSENCE_EVENT_TYPES.includes(event.type as (typeof ABSENCE_EVENT_TYPES)[number]));
-  const unexcusedAbsenceCount = eventsWithTeacherNames.filter((event) => event.type === 'Ескертпей сабаққа келмеуі').length;
+  const unexcusedAbsenceCount = eventsWithTeacherNames.filter((event) => event.type === 'Ескертпей сабаққа келмеді').length;
   const absenceTeacherCount = new Set(absenceEvents.map((event) => event.teacherId)).size;
   const selectedTeacherEvents = selectedTeacherId
     ? eventsWithTeacherNames.filter((event) => event.teacherId === selectedTeacherId)
@@ -183,12 +183,12 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   const selectedTeacherKPIs = selectedTeacher
     ? [
         { title: 'Оқиғалар', value: selectedTeacher.totalEvents, trend: 'Жеке', trendType: 'neutral' as const, icon: <Calendar className="h-5 w-5" />, color: 'bg-blue-500' },
-        { title: 'Сабаққа келмеуі', value: selectedTeacherEventCounts['Сабаққа келмеу'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserX className="h-5 w-5" />, color: 'bg-red-500' },
-        { title: 'Сабаққа кешігу', value: selectedTeacherEventCounts['Сабаққа кешігу'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
-        { title: 'БТС емтиханы күні келмеуі', value: selectedTeacherEventCounts['БТС емтиханы күні келмеуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
+        { title: 'Сабаққа келмеді', value: selectedTeacherEventCounts['Сабаққа келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserX className="h-5 w-5" />, color: 'bg-red-500' },
+        { title: 'Сабаққа кешікті', value: selectedTeacherEventCounts['Сабаққа кешікті'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
+        { title: 'БТС емтиханына келмеді', value: selectedTeacherEventCounts['БТС емтиханына келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
         { title: 'PET/KET емтиханына келмеді', value: selectedTeacherEventCounts['PET/KET емтиханына келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-pink-600' },
         { title: 'Кеш ескерту', value: selectedTeacherEventCounts['Кеш ескерту'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
-        { title: 'Ескертпей сабаққа келмеуі', value: selectedTeacherEventCounts['Ескертпей сабаққа келмеуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
+        { title: 'Ескертпей сабаққа келмеді', value: selectedTeacherEventCounts['Ескертпей сабаққа келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
         { title: 'Ауырып қалуы', value: selectedTeacherEventCounts['Ауырып қалуы'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
         { title: 'Сұранды', value: selectedTeacherEventCounts['Сұранды'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <CheckCircle2 className="h-5 w-5" />, color: 'bg-sky-600' },
         { title: 'Семинар / командировкаға кетуі', value: selectedTeacherEventCounts['Семинар / командировкаға кетуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
@@ -299,9 +299,9 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                       { title: 'Келмеу', value: selectedTeacher.absences, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserX className="h-5 w-5" />, color: 'bg-red-500' },
                       { title: 'Кешігу', value: selectedTeacher.latenesses, trend: 'Жеке', trendType: 'neutral' as const, icon: <Clock className="h-5 w-5" />, color: 'bg-amber-500' },
                       { title: 'Тәртіп көрсеткіші', value: `${selectedTeacher.score}%`, trend: `Рейтингте #${selectedTeacher.rank}`, trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-indigo-600' },
-                      { title: 'БТС емтиханы күні келмеуі', value: selectedTeacherEventCounts['БТС емтиханы күні келмеуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
+                      { title: 'БТС емтиханына келмеді', value: selectedTeacherEventCounts['БТС емтиханына келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <AlertTriangle className="h-5 w-5" />, color: 'bg-rose-500' },
                       { title: 'Кеш ескерту', value: selectedTeacherEventCounts['Кеш ескерту'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <BellRing className="h-5 w-5" />, color: 'bg-orange-500' },
-                      { title: 'Ескертпей сабаққа келмеуі', value: selectedTeacherEventCounts['Ескертпей сабаққа келмеуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
+                      { title: 'Ескертпей сабаққа келмеді', value: selectedTeacherEventCounts['Ескертпей сабаққа келмеді'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <UserMinus className="h-5 w-5" />, color: 'bg-fuchsia-600' },
                       { title: 'Ауырып қалуы', value: selectedTeacherEventCounts['Ауырып қалуы'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Stethoscope className="h-5 w-5" />, color: 'bg-emerald-500' },
                       { title: 'Семинар / командировкаға кетуі', value: selectedTeacherEventCounts['Семинар / командировкаға кетуі'] ?? 0, trend: 'Жеке', trendType: 'neutral' as const, icon: <Briefcase className="h-5 w-5" />, color: 'bg-cyan-600' },
                     ]

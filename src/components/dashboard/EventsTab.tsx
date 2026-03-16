@@ -55,7 +55,7 @@ export function EventsTab({ eventSort, selectedTerm, eventTypeFilter, eventsWith
               }).map((event) => (
                 <tr key={event.id} className="transition-colors hover:bg-slate-50">
                   <td className="px-6 py-4"><p className="text-sm font-bold text-slate-800">{event.teacherName}</p></td>
-                  <td className="px-6 py-4"><span className={`text-sm font-medium ${event.type === 'Сабаққа кешігу' ? 'text-amber-600' : event.type === 'Сабаққа келмеу' || event.type === 'Ескертпей сабаққа келмеуі' || event.type === 'БТС емтиханы күні келмеуі' ? 'text-red-600' : 'text-blue-600'}`}>{event.type}</span></td>
+                <td className="px-6 py-4"><span className={`text-sm font-medium ${event.type === 'Сабаққа кешікті' ? 'text-amber-600' : event.type === 'Сабаққа келмеді' || event.type === 'Ескертпей сабаққа келмеді' || event.type === 'БТС емтиханына келмеді' || event.type === 'PET/KET емтиханына келмеді' ? 'text-red-600' : 'text-blue-600'}`}>{event.type}</span></td>
                   <td className="px-6 py-4 text-sm text-slate-500">{event.date.split('-').reverse().join('.')}</td>
                   <td className="px-6 py-4 text-right"><button onClick={() => onDeleteEvent(event.id)} className="rounded-xl bg-slate-100 p-2 text-slate-400 transition-all hover:bg-rose-50 hover:text-rose-600" title="Өшіру"><Trash2 className="h-4 w-4" /></button></td>
                 </tr>
