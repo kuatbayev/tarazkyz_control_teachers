@@ -14,7 +14,7 @@
   'МХК',
   'Қазақ тілі',
   'Орыс тілі',
-  'Өнер тілі',
+  'Түрік тілі',
 ] as const;
 
 export const ALL_SUBJECTS_LABEL = 'Барлық пәндер';
@@ -24,15 +24,17 @@ export const EVENT_TYPES = [
   'Сабаққа келмеу',
   'Сабаққа кешігу',
   'БТС емтиханы күні келмеуі',
+  'PET/KET емтиханына келмеді',
   'Кеш ескерту',
   'Ескертпей сабаққа келмеуі',
   'Ауырып қалуы',
+  'Сұранды',
   'Семинар / командировкаға кетуі',
 ] as const;
 
 export const ALL_EVENT_TYPES_LABEL = 'Барлық түрлері';
 export const DEFAULT_EVENT_TYPE = EVENT_TYPES[0];
-export const ABSENCE_EVENT_TYPES = [EVENT_TYPES[0], EVENT_TYPES[2], EVENT_TYPES[4]] as const;
+export const ABSENCE_EVENT_TYPES = [EVENT_TYPES[0], EVENT_TYPES[2], EVENT_TYPES[3], EVENT_TYPES[5]] as const;
 
 export const TERM_OPTIONS = [
   { value: 'Жалпы', label: 'Жалпы' },
