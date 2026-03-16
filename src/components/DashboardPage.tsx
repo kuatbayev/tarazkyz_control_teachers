@@ -46,6 +46,7 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   const [eventTypeFilter, setEventTypeFilter] = useState(ALL_EVENT_TYPES_LABEL);
   const [selectedTerm, setSelectedTerm] = useState('Жалпы');
   const [teacherViewMode, setTeacherViewMode] = useState<'all' | 'absentOnly'>('all');
+  const [rankingSortDirection, setRankingSortDirection] = useState<'desc' | 'asc'>('desc');
   const [teacherSort, setTeacherSort] = useState<{ key: keyof Teacher; direction: 'asc' | 'desc' }>({ key: 'rank', direction: 'asc' });
   const [eventSort, setEventSort] = useState<{ key: keyof Event; direction: 'asc' | 'desc' }>({ key: 'date', direction: 'desc' });
   const [showSaveToast, setShowSaveToast] = useState(false);
@@ -166,7 +167,9 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
   }, [selectedTeacherId, visibleTeachers]);
 
   const selectedTeacher = derivedTeachers.find((teacher) => teacher.id === selectedTeacherId) ?? null;
-  const rankingTeachers = [...visibleTeachers].sort((a, b) => b.score - a.score);
+  const rankingTeachers = [...visibleTeachers].sort((a, b) =>
+    rankingSortDirection === 'desc' ? b.score - a.score : a.score - b.score,
+  );
   const topTeachers = rankingTeachers.slice(0, 5);
   const recentEvents = (selectedTeacherId ? eventsWithTeacherNames.filter((event) => event.teacherId === selectedTeacherId) : eventsWithTeacherNames).slice(0, 12);
   const absenceEvents = eventsWithTeacherNames.filter((event) => ABSENCE_EVENT_TYPES.includes(event.type as (typeof ABSENCE_EVENT_TYPES)[number]));
@@ -426,9 +429,22 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
 
           {activeTab === 'ranking' && (
             <div className="space-y-8">
-              <div>
-                <h2 className="text-2xl font-bold text-slate-800">Мұғалімдер рейтингі</h2>
-                <p className="mt-1 text-sm text-slate-500">Тәртіп және жауапкершілік көрсеткіштері бойынша</p>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-800">Мұғалімдер рейтингі</h2>
+                  <p className="mt-1 text-sm text-slate-500">Тәртіп және жауапкершілік көрсеткіштері бойынша</p>
+                </div>
+                <div className="w-full sm:w-64">
+                  <label className="mb-2 block text-sm font-bold text-slate-700">Рейтинг бойынша сұрыптау</label>
+                  <select
+                    value={rankingSortDirection}
+                    onChange={(e) => setRankingSortDirection(e.target.value as 'desc' | 'asc')}
+                    className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium outline-none transition-all focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="desc">Жоғары рейтингтен төменге</option>
+                    <option value="asc">Төмен рейтингтен жоғарыға</option>
+                  </select>
+                </div>
               </div>
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div className="space-y-4 lg:col-span-2">
