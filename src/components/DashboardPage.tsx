@@ -98,11 +98,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
 
       const userId = authData.user?.id;
       if (userId) {
-        if (normalizedEmail && authData.user?.email !== normalizedEmail) {
-          const { error: authEmailError } = await supabase.auth.updateUser({ email: normalizedEmail });
-          if (authEmailError) throw authEmailError;
-        }
-
         const adminProfileResult = await supabase.from('admin_profiles').upsert(
           {
             id: userId,
@@ -428,33 +423,6 @@ export function DashboardPage({ onLogout }: { onLogout: () => void }) {
                   </div>
                 </div>
 
-                <div className="space-y-8">
-                  <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <h3 className="mb-6 text-lg font-bold text-slate-800">{selectedTeacher ? 'Үздік мұғалімдер' : 'Мұғалімдер рейтингі (Топ 5)'}</h3>
-                    <div className="space-y-4">
-                      {topTeachers.map((teacher, index) => (
-                        <div key={teacher.id} className="flex cursor-pointer items-center gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4 transition-all hover:border-blue-200" onClick={() => setSelectedTeacherId(teacher.id)}>
-                          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-sm font-bold text-slate-500 shadow-sm">{index + 1}</div>
-                          <div className="flex-1">
-                            <p className="text-sm font-bold text-slate-800">{teacher.name}</p>
-                            <p className="text-xs text-slate-400">{teacher.subject}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className={`text-lg font-bold ${getScoreColor(teacher.score)}`}>{teacher.score}%</p>
-                            <div className="mt-1 h-1.5 w-20 rounded-full bg-slate-200">
-                              <div className={`h-full ${getScoreBg(teacher.score)}`} style={{ width: `${teacher.score}%` }}></div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    {!selectedTeacher && (
-                      <button onClick={() => setActiveTab('ranking')} className="mt-6 w-full py-3 text-sm font-bold text-blue-600 hover:underline">
-                        Мұғалімдердің толық рейтингі
-                      </button>
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
           )}
