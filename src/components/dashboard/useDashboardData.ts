@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react';
-import { DEFAULT_EVENT_TYPE, normalizeTermValue } from '../../data/options';
+import { DEFAULT_EVENT_TYPE, normalizeSubjectValue, normalizeTermValue } from '../../data/options';
 import { initialEvents, localMockEvents, localMockProfile, localMockTeachers, teachers } from '../../data/mockData';
 import { hasSupabaseConfig, isLocalAuthBypassEnabled, supabase } from '../../lib/supabase';
 import type { Event, Profile, Teacher } from '../../types';
@@ -46,7 +46,7 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       const userId = authData.user?.id;
       const adminProfileRes = userId ? await supabase.from('admin_profiles').select('*').eq('id', userId).maybeSingle() : { data: null, error: null };
       if (teachersRes.data) {
-        setTeachersList(teachersRes.data.map((teacher) => ({ id: teacher.id, name: teacher.name, subject: teacher.subject, score: 100, rank: 0, totalEvents: 0, absences: 0, latenesses: 0, sickDays: 0, lostLessons: 0, substitutions: 0, hasDocuments: teacher.has_documents })));
+        setTeachersList(teachersRes.data.map((teacher) => ({ id: teacher.id, name: teacher.name, subject: normalizeSubjectValue(teacher.subject), score: 100, rank: 0, totalEvents: 0, absences: 0, latenesses: 0, sickDays: 0, lostLessons: 0, substitutions: 0, hasDocuments: teacher.has_documents })));
       }
       if (eventsRes.data) {
         setEventsList(eventsRes.data.map((event) => ({ id: event.id, teacherId: event.teacher_id, teacherName: '', type: event.type, date: event.date, reason: event.reason || '' })));
@@ -79,13 +79,13 @@ export function useDashboardData({ selectedTeacherId, clearSelectedTeacher }: Us
       setTeachersList([...teachersList, localTeacher]);
       return true;
     }
-    const teacherData = { name: newTeacher.name || 'Жаңа мұғалім', subject: newTeacher.subject || 'Пән', has_documents: true };
+    const teacherData = { name: newTeacher.name || 'Жаңа мұғалім', subject: normalizeSubjectValue(newTeacher.subject || 'Пән'), has_documents: true };
     try {
       const { data, error } = await supabase.from('teachers').insert([teacherData]).select();
       if (error) throw error;
       if (data && data.length > 0) {
         const teacher = data[0];
-        setTeachersList([...teachersList, { id: teacher.id, name: teacher.name, subject: teacher.subject, score: 100, rank: teachersList.length + 1, totalEvents: 0, absences: 0, latenesses: 0, sickDays: 0, lostLessons: 0, substitutions: 0, hasDocuments: teacher.has_documents }]);
+        setTeachersList([...teachersList, { id: teacher.id, name: teacher.name, subject: normalizeSubjectValue(teacher.subject), score: 100, rank: teachersList.length + 1, totalEvents: 0, absences: 0, latenesses: 0, sickDays: 0, lostLessons: 0, substitutions: 0, hasDocuments: teacher.has_documents }]);
       }
       return true;
     } catch (error: any) {

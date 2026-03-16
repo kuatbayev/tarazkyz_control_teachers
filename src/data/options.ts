@@ -54,5 +54,9 @@ export function normalizeTermValue(term: string) {
   return matchedOption?.value ?? 'Жалпы';
 }
 
+export function normalizeSubjectValue(subject: string) {
+  return subject === 'Өнер тілі' ? 'Түрік тілі' : subject;
+}
+
 export const MONTH_NAMES = ['Қаң', 'Ақп', 'Нау', 'Сәу', 'Мам', 'Мау', 'Шіл', 'Там', 'Қыр', 'Қаз', 'Қар', 'Жел'] as const;
 export const DISPLAY_MONTHS = ['Қыр', 'Қаз', 'Қар', 'Жел', 'Қаң', 'Ақп', 'Нау'] as const;
