@@ -48,7 +48,7 @@ export function LandingPage({ onLogin }: { onLogin: () => void }) {
       <div className="absolute right-[-10%] top-[-10%] h-[500px] w-[500px] rounded-full bg-blue-600/20 blur-[120px]"></div>
       <div className="absolute bottom-[-10%] left-[-10%] h-[400px] w-[400px] rounded-full bg-emerald-600/10 blur-[100px]"></div>
       <header className="relative z-10 container mx-auto flex items-center justify-between px-6 py-8">
-        <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20"><Layers className="h-6 w-6 text-white" /></div><span className="text-xl font-bold tracking-tight">Turkistan girls BIL</span></div>
+            <div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20"><Layers className="h-6 w-6 text-white" /></div><span className="text-xl font-bold tracking-tight">Taraz girls BIL</span></div>
       </header>
       <main className="relative z-10 container mx-auto flex flex-1 flex-col items-center justify-center gap-16 px-6 py-12 lg:flex-row">
         <div className="max-w-2xl flex-1">
@@ -89,7 +89,7 @@ export function LandingPage({ onLogin }: { onLogin: () => void }) {
           </div>
         </motion.div>
       </main>
-      <footer className="relative z-10 container mx-auto px-6 py-8 text-center text-sm text-slate-500">© 2026 Turkistan girls BIL. Барлық құқықтар қорғалған.</footer>
+      <footer className="relative z-10 container mx-auto px-6 py-8 text-center text-sm text-slate-500">© 2026 Taraz girls BIL. Барлық құқықтар қорғалған.</footer>
     </div>
   );
 }

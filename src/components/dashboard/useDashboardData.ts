@@ -7,7 +7,7 @@ import type { Event, Profile, Teacher } from '../../types';
 const defaultProfile: Profile = {
   name: 'Асхат Б.',
   email: 'admin@bil.edu.kz',
-  schoolName: 'Turkistan girls BIL',
+  schoolName: 'Taraz girls BIL',
   academicYear: '2025-2026 оқу жылы',
   currentTerm: '3 тоқсан',
   position: 'Мектеп директоры',
